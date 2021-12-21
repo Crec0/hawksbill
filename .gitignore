@@ -1,0 +1,5 @@
+build/
+.gradle/
+.idea/
+token
+_netrc
