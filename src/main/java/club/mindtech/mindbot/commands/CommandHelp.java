@@ -10,11 +10,14 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.util.List;
+import java.util.Locale;
+
+import static club.mindtech.mindbot.helpers.StringHelper.*;
 
 public class CommandHelp extends BaseCommand {
 
     public CommandHelp() {
-        super("help", "Shows information about other commands", "help [name]", "h");
+        super("help", "Shows information about other commands", "help [command]", "h");
     }
 
     @Override
@@ -35,7 +38,7 @@ public class CommandHelp extends BaseCommand {
         BaseCommand embedFor = this;
 
         if (args.size() > 0 && Commands.isCommand(args.get(0))) {
-            embedFor = Commands.getCommand(args.get(0));
+            embedFor = Commands.getCommand(lower(args.get(0)));
         }
 
         event.getMessage()
@@ -51,7 +54,7 @@ public class CommandHelp extends BaseCommand {
         OptionMapping mapping = event.getOption("command");
 
         if (mapping != null) {
-            String commandName = mapping.getAsString();
+            String commandName = lower(mapping.getAsString());
             if (Commands.isCommand(commandName)) {
                 embedFor = Commands.getCommand(commandName);
             }
@@ -63,13 +66,18 @@ public class CommandHelp extends BaseCommand {
     }
 
     private static MessageEmbed getHelpEmbed(User author, BaseCommand command) {
-        EmbedBuilder builder = new EmbedBuilder()
-                .setTitle(command.getName())
+        EmbedBuilder embed = new EmbedBuilder()
+                .setTitle("Command: " + command.getName())
                 .setDescription(command.getDescription())
-                .addField("Usage", command.getUsage(), true)
-                .addField("Aliases", command.getAliases().toString(), true)
-                .setColor(0x00f200)
-                .setFooter(author.getAsTag());
-        return builder.build();
+                .addField("Usage:", command.getUsage(), true)
+                .addField("Aliases:", stringify(command.getAliases()), true)
+                .setColor(0x1dd1a1)
+                .setFooter("Requested by " + author.getName());
+
+        return embed.build();
+    }
+
+    private static String lower(String s) {
+        return s.toLowerCase(Locale.ROOT);
     }
 }

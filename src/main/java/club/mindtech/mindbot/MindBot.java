@@ -1,10 +1,8 @@
 package club.mindtech.mindbot;
 
 import club.mindtech.mindbot.commands.Commands;
-import club.mindtech.mindbot.events.MessageEventListener;
-import club.mindtech.mindbot.events.ReadyEventListener;
-import club.mindtech.mindbot.events.SlashCommandEventListener;
-import club.mindtech.mindbot.util.BotUtil;
+import club.mindtech.mindbot.events.*;
+import club.mindtech.mindbot.util.TypedList;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
@@ -46,10 +44,10 @@ public class MindBot {
     }
 
     private static Object[] getListeners() {
-        List<Object> listeners = BotUtil.EventListenerList.of(
-                new MessageEventListener(),
-                new ReadyEventListener(),
-                new SlashCommandEventListener()
+        List<? extends AnnotatedListener> listeners = TypedList.of(
+            new MessageEventListener(),
+            new ReadyEventListener(),
+            new SlashCommandEventListener()
         );
         return listeners.toArray();
     }

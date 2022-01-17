@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 
-public class MessageEventListener {
+public class MessageEventListener extends AnnotatedListener {
 
     @SubscribeEvent
     public void onMessage(MessageReceivedEvent event) {

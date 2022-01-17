@@ -6,7 +6,7 @@ import java.util.List;
 
 public class CommandPing extends BaseCommand {
     public CommandPing() {
-        super("ping", "Pings the user back.", "ping", "p");
+        super("ping", "Pings the user back with Pong!", "ping", "p");
     }
 
     @Override

@@ -4,7 +4,7 @@ import club.mindtech.mindbot.commands.Commands;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
-public class SlashCommandEventListener {
+public class SlashCommandEventListener extends AnnotatedListener {
 
     @SubscribeEvent
     public void onSlashCommand(SlashCommandEvent event) {

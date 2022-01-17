@@ -1,6 +1,6 @@
 package club.mindtech.mindbot.commands;
 
-import club.mindtech.mindbot.util.BotUtil;
+import club.mindtech.mindbot.util.TypedList;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
@@ -10,13 +10,15 @@ import java.util.TreeMap;
 
 public class Commands {
 
+    // Only the main command
     private static final Map<String, BaseCommand> MAIN_COMMANDS = new TreeMap<>();
-    private static final Map<String, BaseCommand> ALIAS_COMMANDS = new TreeMap<>();
+    // Main command + all its aliases
+    private static final Map<String, BaseCommand> ALL_COMMANDS = new TreeMap<>();
 
     private static List<BaseCommand> getAllCommandInstances() {
-        return BotUtil.CommandList.of(
-                new CommandPing(),
-                new CommandHelp()
+        return TypedList.of(
+            new CommandPing(),
+            new CommandHelp()
         );
     }
 
@@ -25,7 +27,7 @@ public class Commands {
     }
 
     public static void registerAlias(String alias, BaseCommand command) {
-        ALIAS_COMMANDS.put(alias, command);
+        ALL_COMMANDS.put(alias, command);
     }
 
     private static void registerCommands() {
@@ -49,14 +51,14 @@ public class Commands {
     }
 
     public static boolean isCommand(String command) {
-        return ALIAS_COMMANDS.containsKey(command);
+        return ALL_COMMANDS.containsKey(command);
     }
 
     public static BaseCommand getCommand(String command) {
-        return ALIAS_COMMANDS.get(command);
+        return ALL_COMMANDS.get(command);
     }
 
     public static void onTextCommand(MessageReceivedEvent event, String commandName, List<String> args) {
-        ALIAS_COMMANDS.get(commandName).onCommand(event, args);
+        ALL_COMMANDS.get(commandName).onCommand(event, args);
     }
 }
