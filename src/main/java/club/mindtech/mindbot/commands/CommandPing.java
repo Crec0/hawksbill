@@ -1,17 +1,18 @@
 package club.mindtech.mindbot.commands;
 
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-
-import java.util.List;
+import club.mindtech.mindbot.MindBot;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 
 public class CommandPing extends BaseCommand {
     public CommandPing() {
-        super("ping", "Pings the user back with Pong!", "ping", "p");
+        super("ping", "Returns the gateway ping of the user!", "ping");
     }
 
     @Override
-    public void onCommand(MessageReceivedEvent event, List<String> args) {
-        super.onCommand(event, args);
-        event.getMessage().reply("Pong!").queue();
+    public void onSlashCommand(SlashCommandEvent event) {
+        super.onSlashCommand(event);
+        MindBot.getAPI()
+               .getRestPing()
+               .queue(ping -> event.deferReply().setContent("Pong! " + ping + " ms").queue());
     }
 }
