@@ -1,6 +1,6 @@
 package club.mindtech.mindbot.commands;
 
-import club.mindtech.mindbot.MindBot;
+import club.mindtech.mindbot.exceptions.CommandNotImplementedException;
 import club.mindtech.mindbot.util.BotUtil;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
@@ -33,6 +33,6 @@ public abstract class BaseCommand {
     }
 
     public void onSlashCommand(SlashCommandEvent event) {
-        MindBot.LOGGER.info("Executing: {}, By: {}", getName(), event.getUser().getName());
+        throw new CommandNotImplementedException("This command does not support slash commands.");
     }
 }

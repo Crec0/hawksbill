@@ -25,8 +25,6 @@ public class CommandHelp extends BaseCommand {
 
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
-        super.onSlashCommand(event);
-
         BaseCommand embedFor = this;
         OptionMapping mapping = event.getOption("command");
 

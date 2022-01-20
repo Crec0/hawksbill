@@ -10,7 +10,6 @@ public class CommandPing extends BaseCommand {
 
     @Override
     public void onSlashCommand(SlashCommandEvent event) {
-        super.onSlashCommand(event);
         MindBot.getAPI()
                .getRestPing()
                .queue(ping -> event.deferReply().setContent("Pong! " + ping + " ms").queue());

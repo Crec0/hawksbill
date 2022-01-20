@@ -25,4 +25,8 @@ public class StringHelper {
     public static String stringify(Set<String> strings) {
         return strings.toString().replace("[", "").replace("]", "");
     }
+
+    public static String zFill(int number, int length) {
+        return String.format("%0" + length + "d", number);
+    }
 }

@@ -5,7 +5,7 @@ public enum Table {
     REMINDME("remindme", "(discord_id bigint NOT NULL UNIQUE, message text NOT NULL, expire_time timestamp with time zone NOT NULL)"),
 //    APPLICATIONS("applications", "()"),
     SCAMS("scams", "(link text NOT NULL UNIQUE)"),
-    POLL("poll", "(discord_id bigint NOT NULL UNIQUE, message_id bigint NOT NULL UNIQUE)"),
+    POLL("poll", "(message_id bigint NOT NULL UNIQUE, expire_time timestamp NOT NULL)"),
 //    PERMISSION("permission", ""),
     TIMEZONE("timezone", "(zone varchar(8) NOT NULL)");
 
