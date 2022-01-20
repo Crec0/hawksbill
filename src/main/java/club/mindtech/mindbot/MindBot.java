@@ -1,7 +1,11 @@
 package club.mindtech.mindbot;
 
 import club.mindtech.mindbot.commands.Commands;
-import club.mindtech.mindbot.events.*;
+import club.mindtech.mindbot.database.PostgresDatabase;
+import club.mindtech.mindbot.events.AnnotatedListener;
+import club.mindtech.mindbot.events.MessageEventListener;
+import club.mindtech.mindbot.events.ReadyEventListener;
+import club.mindtech.mindbot.events.SlashCommandEventListener;
 import club.mindtech.mindbot.util.TypedList;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
@@ -10,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class MindBot {
@@ -23,7 +28,13 @@ public class MindBot {
         }
         String token = args[0];
         createJDA(token);
-        registerCommands();
+//        registerCommands();
+        try {
+            PostgresDatabase.connectToDatabase();
+        } catch (SQLException e) {
+            LOGGER.error("Could not connect to database");
+            e.printStackTrace();
+        }
     }
 
     private static void createJDA(String token) {

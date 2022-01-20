@@ -20,6 +20,7 @@ dependencies {
     implementation("net.dv8tion:JDA:5.+") {
         exclude(module = "opus-java")
     }
+    implementation("org.postgresql:postgresql:42.3.1")
     implementation("org.slf4j:slf4j-api:1.7.32")
     implementation("ch.qos.logback:logback-classic:1.2.10")
 
