@@ -35,6 +35,7 @@ java {
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     archiveFileName.set("${projectName}-${botVersion}.jar")
+    minimize()
 }
 
 application.apply {

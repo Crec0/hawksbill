@@ -1,8 +1,8 @@
-package club.mindtech.mindbot.helpers;
+package club.mindtech.mindbot.util;
 
 import java.util.Set;
 
-public class StringHelper {
+public class StrUtil {
 
     public static String GAP = "⠀";
 

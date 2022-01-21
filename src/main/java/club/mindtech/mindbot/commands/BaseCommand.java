@@ -1,6 +1,6 @@
 package club.mindtech.mindbot.commands;
 
-import club.mindtech.mindbot.exceptions.CommandNotImplementedException;
+import club.mindtech.mindbot.checksAndErrors.exceptions.CommandNotImplementedException;
 import club.mindtech.mindbot.util.BotUtil;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
