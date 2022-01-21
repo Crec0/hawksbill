@@ -33,15 +33,10 @@ java {
     targetCompatibility = JavaVersion.VERSION_16
 }
 
-application.apply {
-    mainClass.set("${group}.${projectName.toLowerCase()}.${projectName}")
+tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    archiveFileName.set("${projectName}-${botVersion}.jar")
 }
 
-tasks.named("shadowJar") {
-    doLast {
-        val jar = project.buildDir.resolve("libs").resolve("${projectName}-all.jar")
-        val renamedJar = project.buildDir.resolve("libs").resolve("${projectName}-${botVersion}.jar")
-        println("Renaming jar from $jar to $renamedJar")
-        jar.renameTo(renamedJar)
-    }
+application.apply {
+    mainClass.set("${group}.${projectName.toLowerCase()}.${projectName}")
 }
