@@ -1,6 +1,8 @@
 package club.mindtech.mindbot.commands;
 
-import club.mindtech.mindbot.util.TypedList;
+import club.mindtech.mindbot.commands.help.CommandHelp;
+import club.mindtech.mindbot.commands.ping.CommandPing;
+import club.mindtech.mindbot.commands.poll.CommandPoll;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 
 import java.util.Map;
@@ -15,10 +17,9 @@ public class Commands {
     }
 
     private static void registerCommands() {
-        TypedList.of(
-            new CommandPing(),
-            new CommandHelp()
-        ).forEach(Commands::register);
+        register(new CommandPing());
+        register(new CommandPoll());
+        register(new CommandHelp());
     }
 
     public static CommandData[] getSlashCommandData() {

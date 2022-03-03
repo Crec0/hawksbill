@@ -1,30 +1,37 @@
-package club.mindtech.mindbot.commands;
+package club.mindtech.mindbot.commands.help;
 
+import club.mindtech.mindbot.commands.BaseCommand;
+import club.mindtech.mindbot.commands.Commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionMapping;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 import java.util.Locale;
 
-public class CommandHelp extends BaseCommand {
+public final class CommandHelp extends BaseCommand {
 
     public CommandHelp() {
         super("help", "Shows information about other commands", "help [command]");
     }
 
     @Override
-    public CommandData getCommandData() {
-        CommandData data = super.getCommandData();
-        data.addOption(OptionType.STRING, "command", "Command name the help should be shown for", false);
-        return data;
+    public SlashCommandData getCommandData() {
+        return super
+            .getCommandData()
+            .addOption(
+                OptionType.STRING,
+                "command",
+                "Command name the help should be shown for",
+                false
+            );
     }
 
     @Override
-    public void onSlashCommand(SlashCommandEvent event) {
+    public void onSlashCommand(SlashCommandInteractionEvent event) {
         BaseCommand embedFor = this;
         OptionMapping mapping = event.getOption("command");
 

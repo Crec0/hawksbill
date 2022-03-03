@@ -1,9 +1,9 @@
 package club.mindtech.mindbot.commands;
 
-import club.mindtech.mindbot.checksAndErrors.exceptions.CommandNotImplementedException;
-import club.mindtech.mindbot.util.BotUtil;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import club.mindtech.mindbot.util.StrUtil;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 
 public abstract class BaseCommand {
     private final String name;
@@ -13,7 +13,7 @@ public abstract class BaseCommand {
     public BaseCommand(String name, String description, String usage) {
         this.name = name;
         this.description = description;
-        this.usage = BotUtil.prefix(usage);
+        this.usage = StrUtil.prefix(usage);
     }
 
     public String getName() {
@@ -28,11 +28,9 @@ public abstract class BaseCommand {
         return usage;
     }
 
-    public CommandData getCommandData() {
-        return new CommandData(name, description);
+    public SlashCommandData getCommandData() {
+        return Commands.slash(name, description);
     }
 
-    public void onSlashCommand(SlashCommandEvent event) {
-        throw new CommandNotImplementedException("This command does not support slash commands.");
-    }
+    public void onSlashCommand(SlashCommandInteractionEvent event) {}
 }

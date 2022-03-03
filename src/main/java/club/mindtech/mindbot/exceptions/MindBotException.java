@@ -1,4 +1,4 @@
-package club.mindtech.mindbot.checksAndErrors.exceptions;
+package club.mindtech.mindbot.exceptions;
 
 public abstract class MindBotException extends RuntimeException {
     public MindBotException(String message) {

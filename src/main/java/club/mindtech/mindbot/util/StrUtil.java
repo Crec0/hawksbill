@@ -1,10 +1,16 @@
 package club.mindtech.mindbot.util;
 
+import club.mindtech.mindbot.config.Config;
+
 import java.util.Set;
 
 public class StrUtil {
 
     public static String GAP = "⠀";
+
+    public static String prefix(String name) {
+        return Config.PREFIX + name;
+    }
 
     public static String bold(String text) {
         return "**" + text.strip() + "**";
