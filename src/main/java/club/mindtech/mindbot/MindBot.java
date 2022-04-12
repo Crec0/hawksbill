@@ -4,6 +4,7 @@ import club.mindtech.mindbot.commands.Commands;
 import club.mindtech.mindbot.events.AnnotatedEventListener;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +20,7 @@ public class MindBot {
             LOGGER.error("No token passed. Please pass token as an argument");
             System.exit(1);
         }
-        String token = args[0];
+        final String token = args[0];
         createJDA(token);
         registerCommands();
     }
@@ -47,8 +48,16 @@ public class MindBot {
     }
 
     private static void registerCommands() {
-        getAPI().updateCommands()
-                .addCommands(Commands.getSlashCommandData())
-                .queue();
+        getAPI().getGuilds().forEach(MindBot::registerGuildCommands);
+    }
+
+    private static void registerGuildCommands(Guild guild) {
+        guild.updateCommands()
+            .addCommands(Commands.getSlashCommandData())
+            .queue();
+    }
+
+    public static MongoDatabase getDatabase() {
+        return database;
     }
 }
