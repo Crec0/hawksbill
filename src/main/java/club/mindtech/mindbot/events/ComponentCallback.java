@@ -1,8 +1,8 @@
-package club.mindtech.mindbot.util;
+package club.mindtech.mindbot.events;
 
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 
-@FunctionalInterface
+
 public interface ComponentCallback {
 	boolean call(GenericComponentInteractionCreateEvent event);
 }

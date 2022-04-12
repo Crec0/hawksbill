@@ -1,32 +1,31 @@
 package club.mindtech.mindbot.events;
 
 import club.mindtech.mindbot.MindBot;
-import club.mindtech.mindbot.exceptions.MindBotException;
 import club.mindtech.mindbot.commands.BaseCommand;
 import club.mindtech.mindbot.commands.Commands;
-import club.mindtech.mindbot.util.ComponentCallback;
+import club.mindtech.mindbot.exceptions.MindBotException;
 import net.dv8tion.jda.api.events.ReadyEvent;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent;
 import net.dv8tion.jda.api.hooks.SubscribeEvent;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class AnnotatedEventListener {
-	private static final Map<String, ComponentCallback> WAITING_EVENTS = new ConcurrentHashMap<>();
+	private static final Map<String, ComponentCallback> componentCallbacks = new HashMap<>();
 
 	public static void awaitEvent(String id, ComponentCallback function) {
-		WAITING_EVENTS.put(id, function);
+		componentCallbacks.put(id, function);
 	}
 
 	@SubscribeEvent
 	public void onComponent(GenericComponentInteractionCreateEvent event) {
 		String id = event.getComponentId();
-		if (WAITING_EVENTS.containsKey(id)) {
-			boolean shouldRemove = WAITING_EVENTS.get(id).call(event);
+		if (componentCallbacks.containsKey(id)) {
+			boolean shouldRemove = componentCallbacks.get(id).call(event);
 			if (shouldRemove) {
-				WAITING_EVENTS.remove(id);
+				componentCallbacks.remove(id);
 			}
 		}
 	}
