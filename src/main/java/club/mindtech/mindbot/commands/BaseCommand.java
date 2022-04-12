@@ -1,6 +1,5 @@
 package club.mindtech.mindbot.commands;
 
-import club.mindtech.mindbot.util.StrUtil;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
@@ -13,7 +12,7 @@ public abstract class BaseCommand {
     public BaseCommand(String name, String description, String usage) {
         this.name = name;
         this.description = description;
-        this.usage = StrUtil.prefix(usage);
+        this.usage = "/" + usage;
     }
 
     public String getName() {
