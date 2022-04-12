@@ -18,6 +18,7 @@
     </appender>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="club.mindtech.mindbot.logback.FilterMongoDriverSpam" />
         <encoder>
             <pattern>%boldCyan([%d{HH:mm:ss}]) %highlight(%-7([%level])) %-40(%green([%logger{0}])) %msg%n</pattern>
         </encoder>
