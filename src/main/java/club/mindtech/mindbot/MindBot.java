@@ -1,51 +1,67 @@
 package club.mindtech.mindbot;
 
-import club.mindtech.mindbot.events.ReadyEventListener;
+import club.mindtech.mindbot.commands.Commands;
+import club.mindtech.mindbot.database.Database;
+import club.mindtech.mindbot.events.AnnotatedEventListener;
+import com.mongodb.client.MongoDatabase;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.hooks.AnnotatedEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MindBot {
     public static final Logger LOGGER = LoggerFactory.getLogger(MindBot.class);
-    private static JDA JDA_INSTANCE;
+    private static JDA API;
+    private static MongoDatabase database;
 
     public static void main(String[] args) {
         if (args.length == 0) {
             LOGGER.error("No token passed. Please pass token as an argument");
             System.exit(1);
         }
-        String token = args[0];
+        final String token = args[0];
         createJDA(token);
+        registerCommands();
+        database = Database.initDatabase();
     }
 
     private static void createJDA(String token) {
-        JDABuilder builder = JDABuilder.createDefault(token);
-        builder.addEventListeners(registerListeners());
-
         try {
-            JDA_INSTANCE = builder.build();
+            API = JDABuilder
+                .createDefault(token)
+                .setEventManager(new AnnotatedEventManager())
+                .addEventListeners(new AnnotatedEventListener())
+                .build()
+                .awaitReady();
         } catch (LoginException e) {
-            LOGGER.error("Failed to create JDA", e);
+            LOGGER.error("Invalid Token. Please check your token");
             System.exit(1);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         LOGGER.info("JDA created");
     }
 
-    private static Object[] registerListeners() {
-        List<Object> listeners = new ArrayList<>(10);
-
-        listeners.add(new ReadyEventListener());
-
-        return listeners.toArray();
+    public static JDA getAPI() {
+        return API;
     }
 
-    public static JDA getJDA() {
-        return JDA_INSTANCE;
+    private static void registerCommands() {
+        getAPI().getGuilds().forEach(MindBot::registerGuildCommands);
+    }
+
+    private static void registerGuildCommands(Guild guild) {
+        guild.updateCommands()
+            .addCommands(Commands.getSlashCommandData())
+            .queue();
+    }
+
+    public static MongoDatabase getDatabase() {
+        return database;
     }
 }

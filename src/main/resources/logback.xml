@@ -1,20 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/logback.log</file>
+        <file>logs/latest.log</file>
         <append>true</append>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/log-%d{yyyy-MM-dd}-%i.log</fileNamePattern>
-            <minIndex>1</minIndex>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>INFO</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>/logs/log-%d{yyyy-MM-dd-HH}-%i.log.gz</fileNamePattern>
             <maxHistory>10</maxHistory>
             <maxFileSize>100MB</maxFileSize>
+            <totalSizeCap>5GB</totalSizeCap>
         </rollingPolicy>
         <encoder>
-            <pattern>%boldCyan([%d{HH:mm:ss}]) %highlight(%-7([%level])) %-40(%green([%logger{0}])) %msg%n</pattern>
+            <pattern>[%d{HH:mm:ss}] %-18([%logger{0}]) %msg%n</pattern>
         </encoder>
     </appender>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="club.mindtech.mindbot.logback.FilterMongoDriverSpam" />
         <encoder>
             <pattern>%boldCyan([%d{HH:mm:ss}]) %highlight(%-7([%level])) %-40(%green([%logger{0}])) %msg%n</pattern>
         </encoder>
