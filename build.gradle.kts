@@ -20,9 +20,12 @@ dependencies {
     implementation("net.dv8tion:JDA:5.+") {
         exclude(module = "opus-java")
     }
-    implementation("org.postgresql:postgresql:42.3.1")
-    implementation("org.slf4j:slf4j-api:1.7.32")
-    implementation("ch.qos.logback:logback-classic:1.2.10")
+    // Database
+    implementation("org.mongodb:mongodb-driver-sync:4.5.1")
+
+    // Logging
+    implementation("org.slf4j:slf4j-api:1.7.36")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")

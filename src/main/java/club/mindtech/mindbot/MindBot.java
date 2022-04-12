@@ -1,7 +1,9 @@
 package club.mindtech.mindbot;
 
 import club.mindtech.mindbot.commands.Commands;
+import club.mindtech.mindbot.database.Database;
 import club.mindtech.mindbot.events.AnnotatedEventListener;
+import com.mongodb.client.MongoDatabase;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.entities.Guild;
@@ -14,6 +16,7 @@ import javax.security.auth.login.LoginException;
 public class MindBot {
     public static final Logger LOGGER = LoggerFactory.getLogger(MindBot.class);
     private static JDA API;
+    private static MongoDatabase database;
 
     public static void main(String[] args) {
         if (args.length == 0) {
@@ -23,6 +26,7 @@ public class MindBot {
         final String token = args[0];
         createJDA(token);
         registerCommands();
+        database = Database.initDatabase();
     }
 
     private static void createJDA(String token) {
