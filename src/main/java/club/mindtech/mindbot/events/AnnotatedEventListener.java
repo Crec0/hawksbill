@@ -41,8 +41,11 @@ public final class AnnotatedEventListener {
 		MindBot.LOGGER.info("Executing command: {} from {}", event.getName(), event.getUser().getName());
 		try {
 			command.onSlashCommand(event);
-		} catch (MindBotException e) {
-			event.deferReply(true).setContent(e.getMessage()).queue();
+		} catch (MindBotException | NullPointerException e) {
+			MindBot.LOGGER.error("Error executing {}: {}", event.getName(), e.getMessage());
+			event.deferReply(true)
+				 .setContent(e.getMessage())
+				 .queue();
 		}
 	}
 }
