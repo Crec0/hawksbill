@@ -1,5 +1,6 @@
 package club.mindtech.mindbot.commands;
 
+import club.mindtech.mindbot.commands.archive.CommandArchive;
 import club.mindtech.mindbot.commands.help.CommandHelp;
 import club.mindtech.mindbot.commands.ping.CommandPing;
 import club.mindtech.mindbot.commands.poll.CommandPoll;
@@ -20,6 +21,7 @@ public class Commands {
         register(new CommandPing());
         register(new CommandPoll());
         register(new CommandHelp());
+        register(new CommandArchive());
     }
 
     public static CommandData[] getSlashCommandData() {
