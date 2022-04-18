@@ -2,5 +2,5 @@ build/
 .gradle/
 .idea/
 logs/
-token
 _netrc
+.env

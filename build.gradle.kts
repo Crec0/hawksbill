@@ -1,7 +1,7 @@
 plugins {
-    java
+    kotlin("jvm") version "1.6.20"
+    id("com.github.johnrengelman.shadow") version "7.1.1"
     application
-    id("com.github.johnrengelman.shadow") version ("7.1.1")
 }
 
 val projectName = "MindBot"
@@ -17,6 +17,10 @@ repositories {
 }
 
 dependencies {
+    // Kotlin
+    implementation("org.jetbrains.kotlin:kotlin-stdlib")
+
+    // JDA
     implementation("net.dv8tion:JDA:5.+") {
         exclude(module = "opus-java")
     }
@@ -29,11 +33,6 @@ dependencies {
 
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.2")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.2")
-}
-
-java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
