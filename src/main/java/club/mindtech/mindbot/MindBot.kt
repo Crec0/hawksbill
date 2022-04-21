@@ -4,6 +4,7 @@ import club.mindtech.mindbot.commands.getSlashCommandData
 import club.mindtech.mindbot.database.initDatabase
 import club.mindtech.mindbot.events.InteractionListener
 import club.mindtech.mindbot.util.env
+import com.mongodb.client.MongoDatabase
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Guild
@@ -15,20 +16,19 @@ import kotlin.system.exitProcess
 val log: Logger = LoggerFactory.getLogger(MindBot::class.java)
 
 fun main() {
-    Thread.setDefaultUncaughtExceptionHandler { _, e -> log.error("An unhandled exception was encountered", e)}
-    Thread.currentThread().name = "[Main] MindBot"
     MindBot(env("DISCORD_TOKEN"))
 }
 
 class MindBot(token: String) {
     companion object {
         lateinit var jda: JDA
+        lateinit var db: MongoDatabase
     }
 
     init {
         jda = createJDA(token)
         registerCommands()
-        initDatabase()
+        db = initDatabase(env("DB_URL"), env("DB_NAME"))
     }
 
     private fun createJDA(token: String): JDA {
