@@ -8,17 +8,16 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
 import java.util.*
 
-private val id get() = UUID.randomUUID().toString()
+private fun uuid(): String = UUID.randomUUID().toString()
 
 fun button(style: ButtonStyle, label: String, callback: ComponentCallback): Button {
+    val id = uuid()
     awaitEvent(id, callback)
     return Button.of(style, id, label)
 }
 
 fun menu(options: List<SelectOption>, callback: ComponentCallback): SelectMenu {
+    val id = uuid()
     awaitEvent(id, callback)
-    return SelectMenu
-        .create(id)
-        .addOptions(options)
-        .build()
+    return SelectMenu.create(id).addOptions(options).build()
 }
