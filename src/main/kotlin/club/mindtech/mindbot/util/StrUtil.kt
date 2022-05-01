@@ -1,7 +1,5 @@
 package club.mindtech.mindbot.util
 
-const val gap = "⠀"
-
 fun bold(text: String): String = "**${text.trim()}**"
 
 fun italic(text: String): String = "*${text.trim()}*"

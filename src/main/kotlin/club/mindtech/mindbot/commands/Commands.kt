@@ -22,10 +22,7 @@ private fun registerCommands() {
 
 fun getSlashCommandData(): Array<CommandData> {
     registerCommands()
-    return COMMANDS
-        .values
-        .map { obj: BaseCommand -> obj.getCommandData() }
-        .toTypedArray()
+    return COMMANDS.values.map { obj: BaseCommand -> obj.getCommandData() }.toTypedArray()
 }
 
 fun getAllCommands(): List<BaseCommand> {

@@ -6,8 +6,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 
 class CommandPing : BaseCommand("ping", "Returns the gateway ping of the user!", "ping") {
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {
-        MindBot.jda.restPing.queue {
-            event.deferReply().setContent("Pong! $it ms").queue()
-        }
+        MindBot.jda.restPing.queue { event.deferReply().setContent("Pong! $it ms").queue() }
     }
 }

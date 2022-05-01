@@ -15,26 +15,27 @@ import kotlin.system.exitProcess
 
 val log: Logger = LoggerFactory.getLogger(MindBot::class.java)
 
-fun main() {
-    MindBot(env("DISCORD_TOKEN"))
-}
-
 class MindBot(token: String) {
     companion object {
         lateinit var jda: JDA
         lateinit var db: MongoDatabase
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            MindBot(env("DISCORD_TOKEN"))
+        }
     }
 
     init {
         jda = createJDA(token)
         registerCommands()
+
         db = initDatabase(env("DB_URL"), env("DB_NAME"))
     }
 
     private fun createJDA(token: String): JDA {
         try {
-            return JDABuilder
-                .createDefault(token)
+            return JDABuilder.createDefault(token)
                 .setEventManager(AnnotatedEventManager())
                 .addEventListeners(InteractionListener())
                 .build()
@@ -46,14 +47,10 @@ class MindBot(token: String) {
     }
 
     private fun registerCommands() {
-        jda.guilds.forEach {
-            registerGuildCommands(it)
-        }
+        jda.guilds.forEach { registerGuildCommands(it) }
     }
 
     private fun registerGuildCommands(guild: Guild) {
-        guild.updateCommands()
-            .addCommands(*getSlashCommandData())
-            .queue()
+        guild.updateCommands().addCommands(*getSlashCommandData()).queue()
     }
 }

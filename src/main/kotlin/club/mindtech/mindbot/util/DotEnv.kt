@@ -18,14 +18,12 @@ fun readEnvFile() {
 
         val keyValPairs = it.split("=", limit = 2).map { part -> part.trim() }
 
-        keyValPairs
-            .any { l -> l.isBlank() }
-            .let { l ->
-                if (l) {
-                    log.warn("Invalid line in .env file: $it")
-                    return@forEachLine
-                }
+        keyValPairs.any { part -> part.isBlank() }.let { isBlank ->
+            if (isBlank) {
+                log.warn("Invalid line in .env file: $it")
+                return@forEachLine
             }
+        }
 
         envVars[keyValPairs[0]] = keyValPairs[1]
     }

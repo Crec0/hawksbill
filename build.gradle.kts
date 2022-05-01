@@ -8,7 +8,6 @@ plugins {
 val projectName = "MindBot"
 val botVersion = "1.0.0"
 val group = "club.mindtech"
-val KTX_COMMIT = "7c1f33a765321721818d7d4fc7c157dd1e5997cb"
 
 repositories {
     mavenCentral()
@@ -28,13 +27,13 @@ dependencies {
 
     // JDA
     implementation("net.dv8tion:JDA:5.0.0-alpha.10")
-    implementation("com.github.minndevelopment:jda-ktx:$KTX_COMMIT")
+    implementation("com.github.minndevelopment:jda-ktx:7c1f33a")
 
     // Database
     implementation("org.litote.kmongo:kmongo-serialization:4.5.1")
 
     // Serialization
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
+    implementation("org.jetbrains.kotlin:kotlin-serialization:1.6.20")
 
     // Logging
     implementation("org.slf4j:slf4j-api:1.7.36")
@@ -42,10 +41,10 @@ dependencies {
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveFileName.set("${projectName}-${botVersion}.jar")
+    archiveFileName.set("$projectName-$botVersion.jar")
     minimize()
 }
 
 application.apply {
-    mainClass.set("${group}.${projectName.toLowerCase()}.${projectName}")
+    mainClass.set("club.mindtech.mindbot.MindBot")
 }

@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEve
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent
 import net.dv8tion.jda.api.hooks.SubscribeEvent
 
-
 typealias ComponentCallback = (event: GenericComponentInteractionCreateEvent) -> Boolean
 
 private val callbacks: MutableMap<String, ComponentCallback> = HashMap()
