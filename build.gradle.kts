@@ -1,3 +1,5 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "1.6.20"
     kotlin("plugin.serialization") version "1.6.20"
@@ -40,11 +42,16 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.2.11")
 }
 
-tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
-    archiveFileName.set("$projectName-$botVersion.jar")
-    minimize()
-}
-
 application.apply {
     mainClass.set("club.mindtech.mindbot.MindBot")
+}
+
+tasks.compileKotlin {
+    println("Deleting old classes")
+    delete("build/classes")
+}
+
+tasks.withType<ShadowJar> {
+    archiveFileName.set("$projectName-$botVersion.jar")
+    minimize()
 }
