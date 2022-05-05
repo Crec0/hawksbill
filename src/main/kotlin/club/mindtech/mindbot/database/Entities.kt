@@ -14,6 +14,7 @@ data class MemberTimeZone(
 @Serializable
 data class Poll(
     val vote_id: String,
+    val labels: List<String>,
     @Contextual
     val votes: Map<String, String> = mutableMapOf(),
 )

@@ -3,6 +3,11 @@ package club.mindtech.mindbot.commands.poll
 import club.mindtech.mindbot.MindBot
 import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.database.Poll
+import club.mindtech.mindbot.helpers.image.image
+import club.mindtech.mindbot.helpers.image.rect
+import club.mindtech.mindbot.helpers.image.text
+import club.mindtech.mindbot.log
+import club.mindtech.mindbot.util.bold
 import club.mindtech.mindbot.util.button
 import club.mindtech.mindbot.util.menu
 import club.mindtech.mindbot.util.zFill
@@ -21,7 +26,8 @@ import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
 import org.litote.kmongo.* // ktlint-disable no-wildcard-imports
-import kotlin.math.ceil
+import java.io.ByteArrayOutputStream
+import javax.imageio.ImageIO
 
 class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<option>...]") {
     override fun getCommandData(): SlashCommandData {
@@ -54,7 +60,9 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         val allOptions = event.options.map { it.asString }.toList()
 
         val question = allOptions[0]
-        val options = allOptions.subList(1, allOptions.size).toSet().toList()
+        val distinctOptions = allOptions.subList(1, allOptions.size).distinct()
+        val selectMenuOptions = getSelectOptions(distinctOptions)
+        val labels = selectMenuOptions.map { it.label }
 
         event
             .deferReply()
@@ -64,20 +72,20 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
                 val embed = Embed {
                     title = question
                     color = 0x06B6D4
-                    description = getJoinedOptions(options)
+                    description = getJoinedOptions(distinctOptions)
                     footer { name = "Poll ID: $id" }
                 }
                 return@flatMap it
                     .editMessageEmbeds(embed)
                     .setActionRow(
-                        getVoteButton(id, question, options),
+                        getVoteButton(id, question, selectMenuOptions),
                         getRetractButton(id)
                     )
             }
-            .queue { createPollEntry(it.id) }
+            .queue { createPollEntry(messageId = it.id, labels = labels) }
     }
 
-    private fun getVoteButton(id: String, question: String, options: List<String>): Button {
+    private fun getVoteButton(id: String, question: String, options: List<SelectOption>): Button {
         return button(ButtonStyle.PRIMARY, "Vote") {
             it.deferReply(true)
                 .setContent("Vote for a $question")
@@ -95,11 +103,11 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         }
     }
 
-    private fun getSelectMenu(id: String, options: List<String>): SelectMenu {
-        return menu(getSelectOptions(options)) {
+    private fun getSelectMenu(id: String, options: List<SelectOption>): SelectMenu {
+        return menu(options) {
             if (it is SelectMenuInteractionEvent) {
                 val memberId = it.user.id
-                val selected = it.selectedOptions.first().value
+                val selected = it.selectedOptions.first().label
                 updatePollEntry(id, memberId, selected)
                 it.deferEdit().setContent("Your vote has been recorded").setActionRows().queue()
             }
@@ -107,8 +115,10 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         }
     }
 
-    private val defaultOptions: List<SelectOption> =
-        listOf(SelectOption.of("Upvote", "upvote"), SelectOption.of("Downvote", "downvote"))
+    private val defaultOptions = listOf(
+        SelectOption.of("Upvote", "upvote"),
+        SelectOption.of("Downvote", "downvote")
+    )
 
     private fun getSelectOptions(options: List<String>): List<SelectOption> {
         return if (options.size < 2) {
@@ -117,16 +127,16 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
             IntRange(0, options.size - 1)
                 .map {
                     val char = ('A'.code + it).toChar()
-                    SelectOption.of("$char", "$char.${options[it]}")
+                    SelectOption.of("$char", options[it])
                 }
-                .toList()
         }
     }
 
     private fun getJoinedOptions(options: List<String>): String {
-        return IntRange(0, options.size - 1).joinToString("\n") {
-            ":regional_indicator_${('a'.code + it).toChar()}: ❱❱ ${options[it]}"
-        }
+        return IntRange(0, options.size - 1)
+            .joinToString("\n") {
+                ":regional_indicator_${('a'.code + it).toChar()}: ${bold("❱")} ${options[it]}"
+            }
     }
 
     private fun handlePollEnd(event: SlashCommandInteractionEvent) {
@@ -140,12 +150,12 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
 
         event.channel.retrieveMessageById(id).queue { message ->
             val resultEmbed = Embed {
-                title = "Poll Results"
                 color = 0x06B6D4
-                description = getFormattedResults(poll.votes)
+                image = "attachment://poll.png"
             }
             message
                 .editMessageEmbeds(*message.embeds.toTypedArray(), resultEmbed)
+                .addFile(getPollResultsImage(poll), "poll.png")
                 .flatMap { it.editMessageComponents() }
                 .queue()
         }
@@ -153,40 +163,73 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         event.deferReply(true).setContent("Poll $id successfully ended").queue()
     }
 
-    private fun getFormattedResults(votes: Map<String, String>): String {
-        val totalVotes = votes.size + 1
-        val voteFrequencies = votes.entries.groupBy { it.value }.mapValues { it.value.size }
-        val histogram = voteFrequencies.entries.map { (option, count) ->
-            val segments = ceil(count.toFloat() / totalVotes.toFloat()).toInt()
-            val bar = "█".repeat(segments)
-            "$option: $bar $count"
+    private fun getPollResultsImage(poll: Poll): ByteArray {
+        val spacing = 8
+        val fontSize = 18
+        val imgWidth = 512
+
+        val imgHeight = fontSize + spacing * 2 + (poll.labels.size * (fontSize + spacing))
+        val maxLabelWidth = poll.labels.map { it.length }.maxOf { it }
+
+        fun paddingLeft(label: String): Int = (maxLabelWidth * if (label.length == maxLabelWidth) 0.0 else 1.5).toInt()
+
+        val groupedVotes = poll.votes.entries.groupBy { it.value }.mapValues { it.value.size }
+
+        val image = image(imgWidth, imgHeight) {
+            rect(x = 0, y = 0, width = imgWidth, height = imgHeight, color = 0xF4F4F5, fill = true)
+            text(
+                x = spacing,
+                y = spacing + fontSize,
+                text = "Poll Results",
+                font = "Montserrat SemiBold",
+                color = 0x475569
+            )
+            poll.labels.forEach { label ->
+                val votes = groupedVotes[label] ?: 0
+                val percentage = (votes * 100.0 / poll.votes.size).toInt()
+                val sectionWidth = percentage / 10 * 32
+                rect(
+                    x = if (label.length > 5) 112 else 32,
+                    y = fontSize + (spacing * 2.5).toInt() + (poll.labels.indexOf(label) * (fontSize + spacing)) - 4,
+                    width = sectionWidth,
+                    height = fontSize + 4,
+                    color = 0x38BDF8,
+                    fill = true
+                )
+                text(
+                    x = spacing,
+                    y = (fontSize + spacing) * 2 + (poll.labels.indexOf(label) * (fontSize + spacing)),
+                    text = label.padStart(paddingLeft(label), ' '),
+                    font = "Montserrat SemiBold",
+                    color = 0x475569
+                )
+                text(
+                    x = (if (sectionWidth == 0) 106 else sectionWidth + 108) + spacing,
+                    y = (fontSize + spacing) * 2 + (poll.labels.indexOf(label) * (fontSize + spacing)),
+                    text = "$votes ($percentage%)",
+                    font = "Montserrat SemiBold",
+                    color = 0x475569
+                )
+            }
         }
-
-        println(voteFrequencies)
-        println(histogram)
-
-        return """
-            |```
-            |Total votes: ${totalVotes - 1}
-            |
-            |${histogram.joinToString("\n")}
-            |```
-        """.trimMargin()
+        val buffer = ByteArrayOutputStream()
+        ImageIO.write(image, "png", buffer)
+        return buffer.toByteArray()
     }
 
     private fun getCollection(): MongoCollection<Poll> {
         return MindBot.db.getCollection()
     }
 
-    private fun createPollEntry(messageId: String) {
-        getCollection().insertOne(Poll(messageId))
+    private fun createPollEntry(messageId: String, labels: List<String>) {
+        getCollection().insertOne(Poll(vote_id = messageId, labels = labels))
     }
 
     private fun updatePollEntry(voteId: String, userId: String, selectedOption: String) {
         getCollection()
             .updateOne(
                 Poll::vote_id eq voteId,
-                Poll::votes.keyProjection(userId) setTo selectedOption
+                Poll::votes.keyProjection(key = userId) setTo selectedOption
             )
     }
 
