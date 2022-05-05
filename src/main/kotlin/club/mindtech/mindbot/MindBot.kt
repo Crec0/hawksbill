@@ -5,10 +5,12 @@ import club.mindtech.mindbot.database.initDatabase
 import club.mindtech.mindbot.events.InteractionListener
 import club.mindtech.mindbot.util.env
 import com.mongodb.client.MongoDatabase
+import dev.minn.jda.ktx.interactions.updateCommands
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager
+import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
@@ -27,7 +29,9 @@ class MindBot(token: String) {
     }
 
     init {
+        log.info("Initializing JDA...")
         jda = createJDA(token)
+        log.info("JDA created")
         registerCommands()
 
         db = initDatabase(env("DB_URL"), env("DB_NAME"))
@@ -47,10 +51,15 @@ class MindBot(token: String) {
     }
 
     private fun registerCommands() {
-        jda.guilds.forEach { registerGuildCommands(it) }
+        val commandData = getSlashCommandData()
+        jda.guilds.forEach {
+            registerGuildCommands(it, commandData)
+        }
     }
 
-    private fun registerGuildCommands(guild: Guild) {
-        guild.updateCommands().addCommands(*getSlashCommandData()).queue()
+    private fun registerGuildCommands(guild: Guild, commandData: Array<CommandData>) {
+        guild.updateCommands {
+            addCommands(*commandData)
+        }.queue()
     }
 }

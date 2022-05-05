@@ -1,8 +1,8 @@
 package club.mindtech.mindbot.commands.help
 
 import club.mindtech.mindbot.commands.BaseCommand
-import club.mindtech.mindbot.commands.getAllCommands
 import club.mindtech.mindbot.commands.getCommand
+import club.mindtech.mindbot.commands.registeredCommands
 import dev.minn.jda.ktx.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.User
@@ -27,9 +27,8 @@ class CommandHelp :
 
     override fun onAutoComplete(event: CommandAutoCompleteInteractionEvent) {
         val userInput = event.focusedOption.value
-        val commands = getAllCommands()
-        val filteredCommands = commands.map { it.name }.filter { it.contains(userInput) }
-        event.replyChoiceStrings(filteredCommands).queue()
+        val matchingCommands = registeredCommands.map { it.name }.filter { it.contains(userInput) }
+        event.replyChoiceStrings(matchingCommands).queue()
     }
 
     private fun getHelpEmbed(author: User, commandName: String?): MessageEmbed {
@@ -66,7 +65,7 @@ class CommandHelp :
     private fun availableCommands(): String {
         return """
             Available commands:
-            ${getAllCommands().joinToString("\n") { "**»** ${it.name}" }}
+            ${registeredCommands.joinToString("\n") { "**»** ${it.name}" }}
             """
     }
 }

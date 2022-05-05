@@ -5,30 +5,18 @@ import club.mindtech.mindbot.commands.help.CommandHelp
 import club.mindtech.mindbot.commands.ping.CommandPing
 import club.mindtech.mindbot.commands.poll.CommandPoll
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
-import java.util.*
 
-private val COMMANDS: MutableMap<String, BaseCommand> = TreeMap()
-
-private fun register(command: BaseCommand) {
-    COMMANDS[command.name] = command
-}
-
-private fun registerCommands() {
-    register(CommandPing())
-    register(CommandPoll())
-    register(CommandHelp())
-    register(CommandArchive())
-}
+val registeredCommands = setOf(
+    CommandPing(),
+    CommandHelp(),
+    CommandPoll(),
+    CommandArchive()
+)
 
 fun getSlashCommandData(): Array<CommandData> {
-    registerCommands()
-    return COMMANDS.values.map { obj: BaseCommand -> obj.getCommandData() }.toTypedArray()
-}
-
-fun getAllCommands(): List<BaseCommand> {
-    return COMMANDS.values.toList()
+    return registeredCommands.map { it.getCommandData() }.toTypedArray()
 }
 
 fun getCommand(command: String?): BaseCommand? {
-    return if (command == null) null else COMMANDS[command]
+    return registeredCommands.singleOrNull { it.name == command }
 }
