@@ -3,7 +3,7 @@ package club.mindtech.mindbot.commands.help
 import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.commands.getCommand
 import club.mindtech.mindbot.commands.registeredCommands
-import dev.minn.jda.ktx.EmbedBuilder
+import dev.minn.jda.ktx.messages.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent

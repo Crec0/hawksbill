@@ -12,9 +12,9 @@ import club.mindtech.mindbot.util.button
 import club.mindtech.mindbot.util.menu
 import club.mindtech.mindbot.util.zFill
 import com.mongodb.client.MongoCollection
-import dev.minn.jda.ktx.Embed
-import dev.minn.jda.ktx.interactions.option
-import dev.minn.jda.ktx.interactions.subcommand
+import dev.minn.jda.ktx.interactions.commands.option
+import dev.minn.jda.ktx.interactions.commands.subcommand
+import dev.minn.jda.ktx.messages.Embed
 import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent

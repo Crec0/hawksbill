@@ -2,9 +2,9 @@ package club.mindtech.mindbot.commands.archive
 
 import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.util.notNull
-import dev.minn.jda.ktx.Embed
-import dev.minn.jda.ktx.interactions.option
-import dev.minn.jda.ktx.interactions.subcommand
+import dev.minn.jda.ktx.interactions.commands.option
+import dev.minn.jda.ktx.interactions.commands.subcommand
+import dev.minn.jda.ktx.messages.Embed
 import net.dv8tion.jda.api.entities.IMentionable
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.Message.Attachment

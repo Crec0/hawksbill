@@ -5,7 +5,7 @@ import club.mindtech.mindbot.database.initDatabase
 import club.mindtech.mindbot.events.InteractionListener
 import club.mindtech.mindbot.util.env
 import com.mongodb.client.MongoDatabase
-import dev.minn.jda.ktx.interactions.updateCommands
+import dev.minn.jda.ktx.interactions.commands.updateCommands
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.Guild

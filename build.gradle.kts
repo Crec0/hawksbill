@@ -1,8 +1,8 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.6.20"
-    kotlin("plugin.serialization") version "1.6.20"
+    kotlin("jvm") version "1.6.21"
+    kotlin("plugin.serialization") version "1.6.21"
     id("com.github.johnrengelman.shadow") version "7.1.1"
     application
 }
@@ -29,7 +29,7 @@ dependencies {
 
     // JDA
     implementation("net.dv8tion:JDA:5.0.0-alpha.10")
-    implementation("com.github.minndevelopment:jda-ktx:7c1f33a")
+    implementation("com.github.minndevelopment:jda-ktx:78e74bc45b8d73a5d7974ef0d5f8efdd5d97910f")
 
     // Database
     implementation("org.litote.kmongo:kmongo-serialization:4.5.1")
