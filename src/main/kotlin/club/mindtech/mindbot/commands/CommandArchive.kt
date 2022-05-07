@@ -1,6 +1,5 @@
-package club.mindtech.mindbot.commands.archive
+package club.mindtech.mindbot.commands
 
-import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.util.notNull
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand

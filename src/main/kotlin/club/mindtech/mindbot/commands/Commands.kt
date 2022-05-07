@@ -1,9 +1,5 @@
 package club.mindtech.mindbot.commands
 
-import club.mindtech.mindbot.commands.archive.CommandArchive
-import club.mindtech.mindbot.commands.help.CommandHelp
-import club.mindtech.mindbot.commands.ping.CommandPing
-import club.mindtech.mindbot.commands.poll.CommandPoll
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
 private val COMMAND_MAP = setOf(

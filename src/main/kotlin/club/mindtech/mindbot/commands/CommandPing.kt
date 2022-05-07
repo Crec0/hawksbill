@@ -1,7 +1,6 @@
-package club.mindtech.mindbot.commands.ping
+package club.mindtech.mindbot.commands
 
 import club.mindtech.mindbot.MindBot
-import club.mindtech.mindbot.commands.BaseCommand
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 
 class CommandPing : BaseCommand("ping", "Returns the gateway ping of the user!", "ping") {

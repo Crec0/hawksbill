@@ -1,7 +1,6 @@
-package club.mindtech.mindbot.commands.poll
+package club.mindtech.mindbot.commands
 
 import club.mindtech.mindbot.MindBot
-import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.database.Poll
 import club.mindtech.mindbot.helpers.Colors
 import club.mindtech.mindbot.helpers.image

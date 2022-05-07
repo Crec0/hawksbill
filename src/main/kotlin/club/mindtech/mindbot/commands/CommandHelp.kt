@@ -1,8 +1,5 @@
-package club.mindtech.mindbot.commands.help
+package club.mindtech.mindbot.commands
 
-import club.mindtech.mindbot.commands.BaseCommand
-import club.mindtech.mindbot.commands.getCommand
-import club.mindtech.mindbot.commands.registeredCommands
 import dev.minn.jda.ktx.messages.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.User
