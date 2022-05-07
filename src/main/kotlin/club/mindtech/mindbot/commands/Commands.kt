@@ -6,17 +6,23 @@ import club.mindtech.mindbot.commands.ping.CommandPing
 import club.mindtech.mindbot.commands.poll.CommandPoll
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
-val registeredCommands = setOf(
+private val COMMAND_MAP = setOf(
     CommandPing(),
     CommandHelp(),
     CommandPoll(),
     CommandArchive()
-)
+).associateBy { it.name }
+
+val registeredCommands = COMMAND_MAP.toMap() // to make a copy
 
 fun getSlashCommandData(): Array<CommandData> {
-    return registeredCommands.map { it.getCommandData() }.toTypedArray()
+    return COMMAND_MAP.values.map { it.getCommandData() }.toTypedArray()
 }
 
 fun getCommand(command: String?): BaseCommand? {
-    return registeredCommands.singleOrNull { it.name == command }
+    return if (command == null) {
+        null
+    } else {
+        COMMAND_MAP[command]
+    }
 }
