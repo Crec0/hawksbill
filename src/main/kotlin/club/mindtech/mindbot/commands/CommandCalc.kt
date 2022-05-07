@@ -25,8 +25,7 @@ class CommandCalc :
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {
         val expression = event.getOptionsByName("expression")[0].asString
-        val cleanExpression = expression.substring(2).trim().removeSurrounding("`").trim()
-        val result = Expression(cleanExpression).calculate()
+        val result = Expression(expression.trim()).calculate()
 
         event.reply("=> $result").queue()
     }
