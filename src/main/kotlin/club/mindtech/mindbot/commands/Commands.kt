@@ -7,10 +7,11 @@ import club.mindtech.mindbot.commands.poll.CommandPoll
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 
 private val COMMAND_MAP = setOf(
-    CommandPing(),
+    CommandArchive(),
+    CommandCalc(),
     CommandHelp(),
+    CommandPing(),
     CommandPoll(),
-    CommandArchive()
 ).associateBy { it.name }
 
 val registeredCommands = COMMAND_MAP.toMap() // to make a copy
