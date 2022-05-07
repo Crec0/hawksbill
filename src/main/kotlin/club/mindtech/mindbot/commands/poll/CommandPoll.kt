@@ -3,10 +3,11 @@ package club.mindtech.mindbot.commands.poll
 import club.mindtech.mindbot.MindBot
 import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.database.Poll
-import club.mindtech.mindbot.helpers.image.image
-import club.mindtech.mindbot.helpers.image.rect
-import club.mindtech.mindbot.helpers.image.text
-import club.mindtech.mindbot.log
+import club.mindtech.mindbot.helpers.Colors
+import club.mindtech.mindbot.helpers.image
+import club.mindtech.mindbot.helpers.rect
+import club.mindtech.mindbot.helpers.sortToRanks
+import club.mindtech.mindbot.helpers.text
 import club.mindtech.mindbot.util.bold
 import club.mindtech.mindbot.util.button
 import club.mindtech.mindbot.util.menu
@@ -163,57 +164,91 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         event.deferReply(true).setContent("Poll $id successfully ended").queue()
     }
 
+    private fun rankingColor(rank: Int): Colors {
+        return when (rank) {
+            1 -> Colors.LIGHT_BLUE_400
+            2 -> Colors.EMERALD_400
+            3 -> Colors.AMBER_400
+            else -> Colors.VIOLET_200
+        }
+    }
+
     private fun getPollResultsImage(poll: Poll): ByteArray {
         val spacing = 8
         val fontSize = 18
         val imgWidth = 512
 
+        val rectSliceSize = 3
+
         val imgHeight = fontSize + spacing * 2 + (poll.labels.size * (fontSize + spacing))
-        val maxLabelWidth = poll.labels.map { it.length }.maxOf { it }
 
-        fun paddingLeft(label: String): Int = (maxLabelWidth * if (label.length == maxLabelWidth) 0.0 else 1.5).toInt()
+        val groupedVotes = poll
+            .votes
+            .entries
+            .groupBy { it.value }
+            .mapValues { it.value.size }
 
-        val groupedVotes = poll.votes.entries.groupBy { it.value }.mapValues { it.value.size }
+        val totalVotes = groupedVotes.values.sum().let { if (it == 0) 1 else it }
+
+        val sortedVoterVotePairs = poll
+            .labels
+            .map { it to (groupedVotes[it] ?: 0) }
+            .sortedByDescending { it.second }
+
+        val rankings = sortToRanks(sortedVoterVotePairs)
 
         val image = image(imgWidth, imgHeight) {
-            rect(x = 0, y = 0, width = imgWidth, height = imgHeight, color = 0xF4F4F5, fill = true)
+            rect(x = 0, y = 0, width = imgWidth, height = imgHeight, color = Colors.GRAY_100, fill = true)
+
             text(
                 x = spacing,
                 y = spacing + fontSize,
                 text = "Poll Results",
                 font = "Montserrat SemiBold",
-                color = 0x475569
+                color = Colors.BLUE_GRAY_600
             )
-            poll.labels.forEach { label ->
+
+            val maxWidthLabel = poll.labels.maxByOrNull { it.length } ?: ""
+            val maxLabelWidth = fontMetrics.stringWidth(maxWidthLabel)
+
+            poll.labels.forEachIndexed { index, label ->
+
                 val votes = groupedVotes[label] ?: 0
-                val percentage = (votes * 100.0 / poll.votes.size).toInt()
-                val sectionWidth = percentage / 10 * 32
+                val percentage = (votes * 100) / totalVotes
+                val rectWidth = percentage * rectSliceSize
+
                 rect(
-                    x = if (label.length > 5) 112 else 32,
-                    y = fontSize + (spacing * 2.5).toInt() + (poll.labels.indexOf(label) * (fontSize + spacing)) - 4,
-                    width = sectionWidth,
+                    x = maxLabelWidth + spacing * 2,
+                    y = fontSize + (spacing * 2.5).toInt() + (index * (fontSize + spacing)) - 4,
+                    width = rectWidth,
                     height = fontSize + 4,
-                    color = 0x38BDF8,
+                    color = rankingColor(rankings[label]!!),
                     fill = true
                 )
+
+                val textY = (fontSize + spacing) * (2 + index)
+                val textWidth = fontMetrics.stringWidth(label)
+
                 text(
-                    x = spacing,
-                    y = (fontSize + spacing) * 2 + (poll.labels.indexOf(label) * (fontSize + spacing)),
-                    text = label.padStart(paddingLeft(label), ' '),
+                    x = maxLabelWidth - textWidth + spacing,
+                    y = textY,
+                    text = label,
                     font = "Montserrat SemiBold",
-                    color = 0x475569
+                    color = Colors.BLUE_GRAY_600
                 )
+
                 text(
-                    x = (if (sectionWidth == 0) 106 else sectionWidth + 108) + spacing,
-                    y = (fontSize + spacing) * 2 + (poll.labels.indexOf(label) * (fontSize + spacing)),
-                    text = "$votes ($percentage%)",
+                    x = maxLabelWidth + spacing * 3 + rectWidth,
+                    y = textY,
+                    text = "$votes [ $percentage % ]",
                     font = "Montserrat SemiBold",
-                    color = 0x475569
+                    color = Colors.BLUE_GRAY_600
                 )
             }
         }
         val buffer = ByteArrayOutputStream()
         ImageIO.write(image, "png", buffer)
+
         return buffer.toByteArray()
     }
 
@@ -234,7 +269,11 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
     }
 
     private fun removePollEntry(voteId: String, userId: String) {
-        getCollection().updateOne(Poll::vote_id eq voteId, unset(Poll::votes.keyProjection(userId)))
+        getCollection()
+            .updateOne(
+                Poll::vote_id eq voteId,
+                unset(Poll::votes.keyProjection(userId))
+            )
     }
 
     private fun fetchAndDelete(voteId: String): Poll? {

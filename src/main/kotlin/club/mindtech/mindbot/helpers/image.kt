@@ -1,10 +1,20 @@
-package club.mindtech.mindbot.helpers.image
+package club.mindtech.mindbot.helpers
 
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
 import java.awt.Toolkit
 import java.awt.image.BufferedImage
+
+enum class Colors(val color: Int) {
+    BLUE_GRAY_600(0x475569),
+    LIGHT_BLUE_400(0x38BDF8),
+    EMERALD_400(0x34D399),
+    AMBER_400(0xFBBF24),
+    VIOLET_200(0xDDD6FE),
+    GRAY_100(0xF4F4F5),
+    WHITE(0xFFFFFF)
+}
 
 fun image(width: Int, height: Int, components: Graphics2D.() -> Unit): BufferedImage {
     val img = BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB)
@@ -23,10 +33,10 @@ fun Graphics2D.rect(
     y: Int,
     width: Int,
     height: Int,
-    color: Int = 0xFFFFFF,
+    color: Colors = Colors.WHITE,
     fill: Boolean = false
 ) {
-    this.color = Color(color)
+    this.color = Color(color.color)
     if (fill) {
         this.fillRect(x, y, width, height)
     } else {
@@ -34,9 +44,17 @@ fun Graphics2D.rect(
     }
 }
 
-fun Graphics2D.text(x: Int, y: Int, text: String, font: String = "oxygen", style: Int = Font.PLAIN, size: Int = 18, color: Int = 0xFFFFFF) {
+fun Graphics2D.text(
+    x: Int,
+    y: Int,
+    text: String,
+    font: String = "Arial",
+    style: Int = Font.PLAIN,
+    size: Int = 18,
+    color: Colors = Colors.WHITE
+) {
     this.font = Font(font, style, size)
-    this.color = Color(color)
+    this.color = Color(color.color)
     this.drawString(text, x, y)
 }
 
