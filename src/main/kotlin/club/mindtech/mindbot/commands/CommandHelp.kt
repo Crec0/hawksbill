@@ -24,7 +24,7 @@ class CommandHelp :
 
     override fun onAutoComplete(event: CommandAutoCompleteInteractionEvent) {
         val userInput = event.focusedOption.value
-        val matchingCommands = registeredCommands.keys.filter { it.contains(userInput) }
+        val matchingCommands = getRegisteredCommands().keys.filter { it.contains(userInput) }
         event.replyChoiceStrings(matchingCommands).queue()
     }
 
@@ -62,7 +62,7 @@ class CommandHelp :
     private fun availableCommands(): String {
         return """
             Available commands:
-            ${registeredCommands.keys.joinToString("\n") { "**»** $it" }}
+            ${getRegisteredCommands().keys.joinToString("\n") { "**»** $it" }}
             """
     }
 }
