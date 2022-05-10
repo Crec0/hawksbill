@@ -36,7 +36,7 @@ private fun sortVotesToRanks(ranks: List<Pair<String, Int>>): Map<String, Int> {
         lastVotes = votes
     }
 
-    return tempMap.toMap()
+    return tempMap
 }
 
 fun createPollResultsImage(poll: Poll): ByteArray {

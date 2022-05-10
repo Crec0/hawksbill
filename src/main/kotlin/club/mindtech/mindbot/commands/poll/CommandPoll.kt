@@ -6,6 +6,7 @@ import club.mindtech.mindbot.database.Poll
 import club.mindtech.mindbot.util.bold
 import club.mindtech.mindbot.util.zFill
 import com.mongodb.client.MongoCollection
+import dev.minn.jda.ktx.interactions.commands.Option
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
 import dev.minn.jda.ktx.messages.Embed
@@ -13,8 +14,6 @@ import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
-import net.dv8tion.jda.api.interactions.commands.OptionType
-import net.dv8tion.jda.api.interactions.commands.build.OptionData
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
@@ -36,14 +35,13 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         val options =
             IntRange(1, 20)
                 .map {
-                    OptionData(OptionType.STRING, "option-${zFill(it, 2)}", "Option $it for the poll")
+                    Option<String>("option-${zFill(it, 2)}", "Option $it for the poll")
                 }
-                .toTypedArray()
 
         return super.getCommandData()
             .subcommand("create", "Create a poll") {
                 option<String>("question", "The question for the poll", true)
-                    .addOptions(*options)
+                    .addOptions(options)
             }
             .subcommand("end", "End a poll") {
                 option<String>("poll-id", "The id of the poll to end")
