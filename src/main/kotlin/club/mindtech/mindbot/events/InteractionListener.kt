@@ -1,39 +1,31 @@
 package club.mindtech.mindbot.events
 
+import club.mindtech.mindbot.commands.ID_SEPARATOR
 import club.mindtech.mindbot.commands.getCommand
 import club.mindtech.mindbot.log
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent
+import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
 import net.dv8tion.jda.api.hooks.SubscribeEvent
-
-typealias ComponentCallback = (event: GenericComponentInteractionCreateEvent) -> Boolean
-
-private val callbacks: MutableMap<String, ComponentCallback> = HashMap()
-
-fun awaitEvent(id: String, function: ComponentCallback) {
-    callbacks[id] = function
-}
 
 class InteractionListener {
 
     @SubscribeEvent
     fun onReady(event: ReadyEvent) {
-        log.info("Bot is ready!")
+        log.info("Bot is ready to serve ${event.guildTotalCount} Guilds!")
     }
 
     @SubscribeEvent
     fun onComponent(event: GenericComponentInteractionCreateEvent) {
-        val id = event.componentId
-        if (callbacks.containsKey(id)) {
-            var shouldRemove = true
-            executeSafely("Executing component callback for $id") {
-                shouldRemove = callbacks[id]!!.invoke(event)
-            }
-            if (shouldRemove) {
-                callbacks.remove(id)
-            }
+        val idArgs = event.componentId.split(ID_SEPARATOR)
+        log.info(idArgs.toString())
+        val command = getCommand(idArgs[0])!!
+        when (event) {
+            is ButtonInteractionEvent -> command.onButtonInteraction(event, idArgs.subList(1, idArgs.size))
+            is SelectMenuInteractionEvent -> command.onMenuInteraction(event, idArgs.subList(1, idArgs.size))
         }
     }
 
@@ -60,9 +52,10 @@ class InteractionListener {
             callable.invoke()
         } catch (e: Exception) {
             log.error(
-                """$errorMessage: ${e.message}
-                   ${e.stackTraceToString()}
-                """.trimIndent()
+                """
+                $errorMessage: ${e.message}
+                ${e.stackTraceToString()}
+                """
             )
         }
     }

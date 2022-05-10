@@ -1,5 +1,6 @@
 package club.mindtech.mindbot.commands
 
+import club.mindtech.mindbot.commands.poll.CommandPoll
 import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import okhttp3.internal.toImmutableMap
 

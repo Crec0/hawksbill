@@ -6,7 +6,7 @@ import java.awt.Graphics2D
 import java.awt.Toolkit
 import java.awt.image.BufferedImage
 
-enum class Colors(val color: Int) {
+enum class Colors(val hex: Int) {
     BLUE_GRAY_600(0x475569),
     LIGHT_BLUE_400(0x38BDF8),
     EMERALD_400(0x34D399),
@@ -36,7 +36,7 @@ fun Graphics2D.rect(
     color: Colors = Colors.WHITE,
     fill: Boolean = false
 ) {
-    this.color = Color(color.color)
+    this.color = Color(color.hex)
     if (fill) {
         this.fillRect(x, y, width, height)
     } else {
@@ -54,7 +54,7 @@ fun Graphics2D.text(
     color: Colors = Colors.WHITE
 ) {
     this.font = Font(font, style, size)
-    this.color = Color(color.color)
+    this.color = Color(color.hex)
     this.drawString(text, x, y)
 }
 
