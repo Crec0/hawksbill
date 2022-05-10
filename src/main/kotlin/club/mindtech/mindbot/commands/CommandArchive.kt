@@ -1,6 +1,5 @@
 package club.mindtech.mindbot.commands
 
-import club.mindtech.mindbot.util.notNull
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
 import dev.minn.jda.ktx.messages.Embed
@@ -35,10 +34,10 @@ class CommandArchive : BaseCommand(
     }
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {
-        val archiveName = notNull(event.getOption("name")).asString
-        val archiveMadeBy = notNull(event.getOption("made-by")).asMentionable.asMention
-        val archiveVersion = notNull(event.getOption("version")).asString
-        val archiveDescription = notNull(event.getOption("description")).asString
+        val archiveName = event.getOption("name")!!.asString
+        val archiveMadeBy = event.getOption("made-by")!!.asMentionable.asMention
+        val archiveVersion = event.getOption("version")!!.asString
+        val archiveDescription = event.getOption("description")!!.asString
         val attachments =
             event.getOptionsByType(OptionType.ATTACHMENT)
                 .groupBy { it.name.substring(0, it.name.indexOf("-")) }
