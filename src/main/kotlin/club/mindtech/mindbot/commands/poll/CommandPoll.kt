@@ -50,8 +50,8 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {
         when (event.commandPath) {
-            "poll/create" -> handlePollCreate(event)
-            "poll/end" -> handlePollEnd(event)
+            "${this.name}/create" -> handlePollCreate(event)
+            "${this.name}/end" -> handlePollEnd(event)
         }
     }
 
