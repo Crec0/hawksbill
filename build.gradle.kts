@@ -40,6 +40,7 @@ dependencies {
     // Logging
     implementation("org.slf4j:slf4j-api:1.7.36")
     implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("ch.qos.logback:logback-core:1.2.11")
 
     // calculator
     implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.0.2")
@@ -56,5 +57,4 @@ tasks.compileKotlin {
 
 tasks.withType<ShadowJar> {
     archiveFileName.set("$projectName-$botVersion.jar")
-    minimize()
 }
