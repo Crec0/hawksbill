@@ -1,11 +1,10 @@
 package club.mindtech.mindbot.commands.poll
 
-import club.mindtech.mindbot.MindBot
 import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.database.Poll
+import club.mindtech.mindbot.database.getCollection
 import club.mindtech.mindbot.util.bold
 import club.mindtech.mindbot.util.zFill
-import com.mongodb.client.MongoCollection
 import dev.minn.jda.ktx.interactions.commands.Option
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
@@ -20,7 +19,6 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
 import org.litote.kmongo.keyProjection
 import org.litote.kmongo.setTo
 import org.litote.kmongo.unset
@@ -172,20 +170,16 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         event.deferReply(true).setContent("Poll $id successfully ended").queue()
     }
 
-    private fun getCollection(): MongoCollection<Poll> {
-        return MindBot.db.getCollection()
-    }
-
     private fun createPollEntry(messageId: String, question: String, options: Map<String, String>) {
-        getCollection().insertOne(Poll(vote_id = messageId, question = question, options = options))
+        getCollection<Poll>().insertOne(Poll(vote_id = messageId, question = question, options = options))
     }
 
     private fun fetchPoll(pollID: String): Poll? {
-        return getCollection().findOne(Poll::vote_id eq pollID)
+        return getCollection<Poll>().findOne(Poll::vote_id eq pollID)
     }
 
     private fun updatePollEntry(voteId: String, userId: String, selectedOption: String) {
-        getCollection()
+        getCollection<Poll>()
             .updateOne(
                 Poll::vote_id eq voteId,
                 Poll::votes.keyProjection(key = userId) setTo selectedOption
@@ -193,7 +187,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
     }
 
     private fun removePollEntry(voteId: String, userId: String) {
-        getCollection()
+        getCollection<Poll>()
             .updateOne(
                 Poll::vote_id eq voteId,
                 unset(Poll::votes.keyProjection(userId))
@@ -201,6 +195,6 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
     }
 
     private fun fetchAndDelete(voteId: String): Poll? {
-        return getCollection().findOneAndDelete(Poll::vote_id eq voteId)
+        return getCollection<Poll>().findOneAndDelete(Poll::vote_id eq voteId)
     }
 }
