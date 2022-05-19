@@ -8,9 +8,7 @@ import com.mongodb.client.MongoDatabase
 import dev.minn.jda.ktx.interactions.commands.updateCommands
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
-import net.dv8tion.jda.api.entities.Guild
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager
-import net.dv8tion.jda.api.interactions.commands.build.CommandData
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
@@ -54,16 +52,11 @@ class MindBot(token: String, dbURI: String, dbName: String) {
     }
 
     private fun registerCommands(api: JDA) {
-        val commandData = getSlashCommandData()
-        api.guilds.forEach {
-            registerGuildCommands(it, commandData)
+        getSlashCommandData().let { commandData ->
+            api.guilds.forEach { guild ->
+                guild.updateCommands { addCommands(commandData) }.queue()
+            }
         }
-    }
-
-    private fun registerGuildCommands(guild: Guild, commandData: Array<CommandData>) {
-        guild.updateCommands {
-            addCommands(*commandData)
-        }.queue()
     }
 }
 

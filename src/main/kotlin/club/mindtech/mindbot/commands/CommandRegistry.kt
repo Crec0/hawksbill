@@ -14,8 +14,8 @@ private val COMMAND_MAP = setOf(
 
 fun getRegisteredCommands() = COMMAND_MAP
 
-fun getSlashCommandData(): Array<CommandData> {
-    return COMMAND_MAP.values.map { it.getCommandData() }.toTypedArray()
+fun getSlashCommandData(): List<CommandData> {
+    return COMMAND_MAP.values.map { it.getCommandData() }
 }
 
 fun getCommand(command: String?): BaseCommand? {
