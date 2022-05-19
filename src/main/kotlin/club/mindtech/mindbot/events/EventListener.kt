@@ -1,5 +1,6 @@
 package club.mindtech.mindbot.events
 
+import club.mindtech.mindbot.bot
 import club.mindtech.mindbot.commands.ID_SEPARATOR
 import club.mindtech.mindbot.commands.getCommand
 import club.mindtech.mindbot.log
@@ -11,11 +12,12 @@ import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteract
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
 import net.dv8tion.jda.api.hooks.SubscribeEvent
 
-class InteractionListener {
+class EventListener {
 
     @SubscribeEvent
     fun onReady(event: ReadyEvent) {
-        log.info("Bot is ready to serve ${event.guildTotalCount} Guilds!")
+        bot.registerCommands(event.jda)
+        log.info("Commands registered for ${event.guildTotalCount} guild${if (event.guildTotalCount == 1) "" else "s"}!")
     }
 
     @SubscribeEvent
