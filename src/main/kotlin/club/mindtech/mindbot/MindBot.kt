@@ -17,42 +17,45 @@ import kotlin.system.exitProcess
 
 val log: Logger = LoggerFactory.getLogger(MindBot::class.java)
 
-class MindBot(token: String) {
-    companion object {
-        lateinit var jda: JDA
-        lateinit var db: MongoDatabase
+val bot: MindBot by lazy {
+    MindBot(
+        token = env("DISCORD_TOKEN"),
+        dbURI = env("DB_URL"),
+        dbName = env("DB_NAME")
+    )
+}
 
-        @JvmStatic
-        fun main(args: Array<String>) {
-            MindBot(env("DISCORD_TOKEN"))
+inline fun <reified T : Any> initOrExit(block: () -> T): T {
+    log.info("Initializing ${T::class.simpleName}")
+    return try {
+        block()
+    } catch (e: Exception) {
+        log.error("Fatal exception", e)
+        exitProcess(1)
+    }
+}
+
+class MindBot(token: String, dbURI: String, dbName: String) {
+    val jda: JDA = initOrExit { initJDA(token) }
+    val database: MongoDatabase = initOrExit { initDatabase(dbURI, dbName) }
+
+    private fun initJDA(token: String): JDA {
+        val jda = JDABuilder.createDefault(token)
+            .setEventManager(AnnotatedEventManager())
+            .addEventListeners(InteractionListener())
+            .build()
+            .awaitReady()
+        log.info("JDA initialized")
+
+        return jda.also {
+            registerCommands(it)
+            log.info("Commands registered")
         }
     }
 
-    init {
-        log.info("Initializing JDA...")
-        jda = createJDA(token)
-        log.info("JDA created")
-        registerCommands()
-
-        db = initDatabase(env("DB_URL"), env("DB_NAME"))
-    }
-
-    private fun createJDA(token: String): JDA {
-        try {
-            return JDABuilder.createDefault(token)
-                .setEventManager(AnnotatedEventManager())
-                .addEventListeners(InteractionListener())
-                .build()
-                .awaitReady()
-        } catch (e: Exception) {
-            log.error("Failed to create JDA: {}", e.message)
-            exitProcess(1)
-        }
-    }
-
-    private fun registerCommands() {
+    private fun registerCommands(api: JDA) {
         val commandData = getSlashCommandData()
-        jda.guilds.forEach {
+        api.guilds.forEach {
             registerGuildCommands(it, commandData)
         }
     }
@@ -61,5 +64,11 @@ class MindBot(token: String) {
         guild.updateCommands {
             addCommands(*commandData)
         }.queue()
+    }
+}
+
+fun main() {
+    bot.jda.restPing.queue { time ->
+        log.info("Gateway ping: $time")
     }
 }
