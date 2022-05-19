@@ -28,7 +28,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
 
     // JDA
-    implementation("net.dv8tion:JDA:5.0.0-alpha.10")
+    implementation("net.dv8tion:JDA:5.0.0-alpha.12")
     implementation("com.github.minndevelopment:jda-ktx:78e74bc45b8d73a5d7974ef0d5f8efdd5d97910f")
 
     // Database
@@ -47,7 +47,7 @@ dependencies {
 }
 
 application.apply {
-    mainClass.set("club.mindtech.mindbot.MindBot")
+    mainClass.set("club.mindtech.mindbot.MindBotKt")
 }
 
 tasks.compileKotlin {
