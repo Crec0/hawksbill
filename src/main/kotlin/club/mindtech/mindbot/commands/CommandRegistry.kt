@@ -10,6 +10,7 @@ private val COMMAND_MAP = setOf(
     CommandHelp(),
     CommandPing(),
     CommandPoll(),
+    CommandRemindMe(),
 ).associateBy { it.name }.toImmutableMap()
 
 fun getRegisteredCommands() = COMMAND_MAP

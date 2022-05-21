@@ -17,17 +17,17 @@ data class MemberTimeZone(
 data class Poll(
     val vote_id: String,
     val question: String,
-    @Contextual
     val options: Map<String, String>,
-    @Contextual
     val votes: Map<String, String> = mapOf(),
 ) : Entity
 
 @Serializable
 data class RemindMe(
+    val reminder_id: String,
     val member_id: String,
     val message: String,
-    val time: Long
+    val created: String,
+    val expiry: String,
 ) : Entity
 
 @Serializable

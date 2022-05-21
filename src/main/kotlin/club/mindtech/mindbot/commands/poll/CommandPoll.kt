@@ -3,13 +3,12 @@ package club.mindtech.mindbot.commands.poll
 import club.mindtech.mindbot.commands.BaseCommand
 import club.mindtech.mindbot.database.Poll
 import club.mindtech.mindbot.database.getCollection
-import club.mindtech.mindbot.util.bold
+import club.mindtech.mindbot.util.EMPTY
 import club.mindtech.mindbot.util.zFill
 import dev.minn.jda.ktx.interactions.commands.Option
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
 import dev.minn.jda.ktx.messages.Embed
-import net.dv8tion.jda.api.EmbedBuilder
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
@@ -62,7 +61,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
 
         event
             .deferReply()
-            .flatMap { it.editOriginal(EmbedBuilder.ZERO_WIDTH_SPACE) }
+            .flatMap { it.editOriginal(EMPTY) }
             .flatMap { message ->
                 val pollId = message.id
 
@@ -142,7 +141,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
 
         return IntRange(0, options.size - 1)
             .joinToString("\n") {
-                ":regional_indicator_${('a'.code + it).toChar()}: ${bold("❱")} ${options[it]}"
+                ":regional_indicator_${('a'.code + it).toChar()}: ${"**❱**"} ${options[it]}"
             }
     }
 
