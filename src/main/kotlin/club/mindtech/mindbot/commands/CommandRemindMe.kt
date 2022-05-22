@@ -194,8 +194,6 @@ class CommandRemindMe :
         val channel = bot.jda.getChannel<TextChannel>(reminder.channel_id)
         val user = bot.jda.retrieveUserById(reminder.member_id).complete()
 
-        log.info("$user, $channel")
-
         channel?.sendMessage(
             """
             Reminder for ${user.asMention}

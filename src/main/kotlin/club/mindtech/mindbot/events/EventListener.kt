@@ -23,7 +23,6 @@ class EventListener {
     @SubscribeEvent
     fun onComponent(event: GenericComponentInteractionCreateEvent) {
         val idArgs = event.componentId.split(ID_SEPARATOR)
-        log.info(idArgs.toString())
         val command = getCommand(idArgs[0])!!
         when (event) {
             is ButtonInteractionEvent -> command.onButtonInteraction(event, idArgs.subList(1, idArgs.size))
