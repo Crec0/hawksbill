@@ -25,6 +25,7 @@ data class Poll(
 data class RemindMe(
     val reminder_id: String,
     val member_id: String,
+    val channel_id: String,
     val message: String,
     val created: String,
     val expiry: String,
