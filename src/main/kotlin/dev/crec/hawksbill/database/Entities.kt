@@ -16,6 +16,7 @@ data class MemberTimeZone(
 @Serializable
 data class Poll(
     val vote_id: String,
+    val channel_id: String,
     val question: String,
     val options: Map<String, String>,
     val votes: Map<String, String> = mapOf(),

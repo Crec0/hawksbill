@@ -77,7 +77,14 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
                         Button.danger(retractVoteId, PollButtons.RETRACT.value)
                     )
             }
-            .queue { message -> createPollEntry(messageId = message.id, question = question, options = options) }
+            .queue { message ->
+                createPollEntry(
+                    messageId = message.id,
+                    channelId = message.channel.id,
+                    question = question,
+                    options = options
+                )
+            }
     }
 
     override fun onButtonInteraction(event: ButtonInteractionEvent, idArgs: List<String>) {
@@ -142,14 +149,21 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
 
     private fun handlePollEnd(event: SlashCommandInteractionEvent) {
         val id: String = event.getOption("poll-id")!!.asString
-        val poll: Poll? = fetchAndDelete(id)
+        val poll: Poll? = fetchPoll(id)
 
         if (poll == null) {
             event.deferReply(true).setContent("Poll not found").queue()
             return
         }
 
-        event.channel.retrieveMessageById(id).queue { message ->
+        val channel = event.jda.getTextChannelById(poll.channel_id)
+
+        if (channel == null) {
+            event.deferReply(true).setContent("Poll channel not found").queue()
+            return
+        }
+
+        channel.retrieveMessageById(id).queue { message ->
             val resultEmbed = Embed {
                 color = 0x06B6D4
                 image = "attachment://$IMAGE_NAME"
@@ -160,12 +174,19 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
                 .flatMap { it.editMessageComponents() }
                 .queue()
         }
-
+        deletePoll(id)
         event.deferReply(true).setContent("Poll $id successfully ended").queue()
     }
 
-    private fun createPollEntry(messageId: String, question: String, options: Map<String, String>) {
-        getCollection<Poll>().insertOne(Poll(vote_id = messageId, question = question, options = options))
+    private fun createPollEntry(messageId: String, channelId: String, question: String, options: Map<String, String>) {
+        getCollection<Poll>().insertOne(
+            Poll(
+                vote_id = messageId,
+                channel_id = channelId,
+                question = question,
+                options = options
+            )
+        )
     }
 
     private fun fetchPoll(pollID: String): Poll? {
@@ -188,7 +209,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
             )
     }
 
-    private fun fetchAndDelete(voteId: String): Poll? {
-        return getCollection<Poll>().findOneAndDelete(Poll::vote_id eq voteId)
+    private fun deletePoll(voteId: String) {
+        getCollection<Poll>().deleteOne(Poll::vote_id eq voteId)
     }
 }
