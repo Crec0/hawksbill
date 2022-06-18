@@ -1,26 +1,25 @@
-package club.mindtech.mindbot.commands
+package dev.crec.hawksbill.commands
 
 import dev.minn.jda.ktx.interactions.commands.option
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.mariuszgromada.math.mxparser.Expression
 
-class CommandCalc :
-    BaseCommand(
-        name = "calc",
-        description = "Calculates a math expression. For usage, check: https://mathparser.org/mxparser-tutorial",
-        usage = "calc <expression>"
-    ) {
+class CommandCalc : BaseCommand(
+    name = "calc",
+    description = "Calculates a math expression. For usage, check: https://mathparser.org/mxparser-tutorial",
+    usage = "calc <expression>"
+) {
 
     override fun getCommandData(): SlashCommandData {
-        return super
-            .getCommandData()
-            .option<String>(
+        return super.getCommandData {
+            option<String>(
                 name = "expression",
                 description = "The expression to calculate",
                 required = true,
                 autocomplete = false
             )
+        }
     }
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {

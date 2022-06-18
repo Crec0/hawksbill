@@ -1,20 +1,24 @@
-package club.mindtech.mindbot.commands
+package dev.crec.hawksbill.commands
 
+import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.messages.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
-import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
-class CommandHelp :
-    BaseCommand("help", "Shows information about other commands", "help [command]") {
+class CommandHelp : BaseCommand("help", "Shows information about other commands", "help [command]") {
+
     override fun getCommandData(): SlashCommandData {
-        return super.getCommandData()
-            .addOption(
-                OptionType.STRING, "command", "Command name the help should be shown for", false, true
+        return super.getCommandData {
+            option<String>(
+                name = "command",
+                description = "Command name the help should be shown for",
+                required = false,
+                autocomplete = true
             )
+        }
     }
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {

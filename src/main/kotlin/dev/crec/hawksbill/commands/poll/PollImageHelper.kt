@@ -1,10 +1,10 @@
-package club.mindtech.mindbot.commands.poll
+package dev.crec.hawksbill.commands.poll
 
-import club.mindtech.mindbot.database.Poll
-import club.mindtech.mindbot.helpers.Colors
-import club.mindtech.mindbot.helpers.image
-import club.mindtech.mindbot.helpers.rect
-import club.mindtech.mindbot.helpers.text
+import dev.crec.hawksbill.database.Poll
+import dev.crec.hawksbill.helpers.Colors
+import dev.crec.hawksbill.helpers.image
+import dev.crec.hawksbill.helpers.rect
+import dev.crec.hawksbill.helpers.text
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
@@ -71,7 +71,7 @@ fun createPollResultsImage(poll: Poll): ByteArray {
             x = spacing,
             y = spacing + fontSize,
             text = "Poll Results",
-            font = "Montserrat SemiBold",
+            fontName = "Montserrat SemiBold",
             color = Colors.BLUE_GRAY_600
         )
 
@@ -100,7 +100,7 @@ fun createPollResultsImage(poll: Poll): ByteArray {
                 x = maxLabelWidth - textWidth + spacing,
                 y = textY,
                 text = label,
-                font = "Montserrat SemiBold",
+                fontName = "Montserrat SemiBold",
                 color = Colors.BLUE_GRAY_600
             )
 
@@ -108,7 +108,7 @@ fun createPollResultsImage(poll: Poll): ByteArray {
                 x = maxLabelWidth + spacing * 3 + rectWidth,
                 y = textY,
                 text = "$votes [ $percentage % ]",
-                font = "Montserrat SemiBold",
+                fontName = "Montserrat SemiBold",
                 color = Colors.BLUE_GRAY_600
             )
         }

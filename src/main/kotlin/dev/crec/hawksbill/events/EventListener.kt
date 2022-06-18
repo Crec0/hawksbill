@@ -1,9 +1,9 @@
-package club.mindtech.mindbot.events
+package dev.crec.hawksbill.events
 
-import club.mindtech.mindbot.bot
-import club.mindtech.mindbot.commands.ID_SEPARATOR
-import club.mindtech.mindbot.commands.getCommand
-import club.mindtech.mindbot.log
+import dev.crec.hawksbill.bot
+import dev.crec.hawksbill.commands.ID_SEPARATOR
+import dev.crec.hawksbill.commands.getCommand
+import dev.crec.hawksbill.log
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent

@@ -1,6 +1,6 @@
-package club.mindtech.mindbot.util
+package dev.crec.hawksbill.util
 
-import club.mindtech.mindbot.log
+import dev.crec.hawksbill.log
 import java.io.File
 
 private val envVars: MutableMap<String, String> = mutableMapOf()

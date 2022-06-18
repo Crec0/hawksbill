@@ -15,7 +15,7 @@ Please refer [Commands](COMMANDS.md)
 Note: Only required if you're following [Compiled Jar](#compiled-jar). Otherwise, you can skip this section.
 ```shell
 # Clone the project
-$ git clone https://github.com/MindTechMC/MindBot
+$ git clone https://github.com/Crec0/HawksBill
 
 # Change directory to the project
 $ cd MindBot

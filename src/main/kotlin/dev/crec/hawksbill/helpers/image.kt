@@ -1,4 +1,4 @@
-package club.mindtech.mindbot.helpers
+package dev.crec.hawksbill.helpers
 
 import java.awt.Color
 import java.awt.Font
@@ -14,6 +14,10 @@ enum class Colors(val hex: Int) {
     VIOLET_200(0xDDD6FE),
     GRAY_100(0xF4F4F5),
     WHITE(0xFFFFFF)
+}
+
+fun Int.ptToPx(): Int {
+    return this * 72 / 96
 }
 
 fun image(width: Int, height: Int, components: Graphics2D.() -> Unit): BufferedImage {
@@ -48,12 +52,13 @@ fun Graphics2D.text(
     x: Int,
     y: Int,
     text: String,
-    font: String = "Arial",
+    fontName: String = "Arial",
     style: Int = Font.PLAIN,
     size: Int = 18,
+    font: Font = Font(fontName, style, size),
     color: Colors = Colors.WHITE
 ) {
-    this.font = Font(font, style, size)
+    this.font = font
     this.color = Color(color.hex)
     this.drawString(text, x, y)
 }

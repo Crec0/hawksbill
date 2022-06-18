@@ -1,22 +1,18 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.6.21"
-    kotlin("plugin.serialization") version "1.6.21"
+    kotlin("jvm") version "1.7.0"
+    kotlin("plugin.serialization") version "1.7.0"
     id("com.github.johnrengelman.shadow") version "7.1.1"
     application
 }
 
-val projectName = "MindBot"
+val projectName = "HawksBill"
 val botVersion = "1.0.0"
-val group = "club.mindtech"
+val group = "dev.crec"
 
 repositories {
     mavenCentral()
-    maven {
-        name = "JDA"
-        url = uri("https://m2.dv8tion.net/releases")
-    }
     maven {
         name = "Jitpack"
         url = uri("https://jitpack.io")
@@ -35,7 +31,7 @@ dependencies {
     implementation("org.litote.kmongo:kmongo-serialization:4.5.1")
 
     // Serialization
-    implementation("org.jetbrains.kotlin:kotlin-serialization:1.6.20")
+    implementation("org.jetbrains.kotlin:kotlin-serialization:1.7.0")
 
     // Logging
     implementation("org.slf4j:slf4j-api:1.7.36")
@@ -47,12 +43,18 @@ dependencies {
 }
 
 application.apply {
-    mainClass.set("club.mindtech.mindbot.MindBotKt")
+    mainClass.set("dev.crec.hawksbill.HawksBillKt")
 }
 
 tasks.compileKotlin {
     println("Deleting old classes")
-    delete("build/classes")
+    delete("build")
+}
+
+tasks.build {
+    doLast {
+        delete("build/libs/$projectName.jar")
+    }
 }
 
 tasks.withType<ShadowJar> {

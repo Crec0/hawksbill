@@ -1,4 +1,4 @@
-package club.mindtech.mindbot.util
+package dev.crec.hawksbill.util
 
 import java.security.MessageDigest
 import kotlin.random.Random

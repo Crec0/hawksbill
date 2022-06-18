@@ -1,6 +1,6 @@
-package club.mindtech.mindbot.database
+package dev.crec.hawksbill.database
 
-import club.mindtech.mindbot.bot
+import dev.crec.hawksbill.bot
 import com.mongodb.client.MongoCollection
 import com.mongodb.client.MongoDatabase
 import org.litote.kmongo.KMongo

@@ -1,13 +1,13 @@
-package club.mindtech.mindbot.commands
+package dev.crec.hawksbill.commands
 
-import club.mindtech.mindbot.bot
-import club.mindtech.mindbot.database.RemindMe
-import club.mindtech.mindbot.database.getCollection
-import club.mindtech.mindbot.helpers.Colors
-import club.mindtech.mindbot.log
-import club.mindtech.mindbot.util.SPACE_1EM
-import club.mindtech.mindbot.util.hashString
-import club.mindtech.mindbot.util.truncate
+import dev.crec.hawksbill.bot
+import dev.crec.hawksbill.database.RemindMe
+import dev.crec.hawksbill.database.getCollection
+import dev.crec.hawksbill.helpers.Colors
+import dev.crec.hawksbill.log
+import dev.crec.hawksbill.util.SPACE_1EM
+import dev.crec.hawksbill.util.hashString
+import dev.crec.hawksbill.util.truncate
 import dev.minn.jda.ktx.generics.getChannel
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
@@ -26,12 +26,11 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 
-class CommandRemindMe :
-    BaseCommand(
-        "remindme",
-        "Reminds you of something in the future",
-        "remindme <time> <message>",
-    ) {
+class CommandRemindMe : BaseCommand(
+    "remindme",
+    "Reminds you of something in the future",
+    "remindme <time> <message>",
+) {
 
     init {
         Timer().schedule(
@@ -57,20 +56,21 @@ class CommandRemindMe :
     }
 
     override fun getCommandData(): SlashCommandData {
-        return super.getCommandData()
-            .subcommand("add", "Adds a reminder") {
+        return super.getCommandData {
+            subcommand("add", "Adds a reminder") {
                 option<String>(name = "time", description = "The time to remind you of", required = true)
                 option<String>(name = "message", description = "The message to remind you of", required = true)
             }
-            .subcommand("cancel", "Cancels a reminder") {
+            subcommand("cancel", "Cancels a reminder") {
                 option<String>(name = "id", description = "The id of the reminder to cancel", required = true)
             }
-            .subcommand("list", "Lists all reminders") {
+            subcommand("list", "Lists all reminders") {
                 option<User>(name = "user", description = "The user to list reminders for", required = true)
             }
-            .subcommand("info", "Gets info about a reminder") {
+            subcommand("info", "Gets info about a reminder") {
                 option<String>(name = "id", description = "The id of the reminder to get info about", required = true)
             }
+        }
     }
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {
@@ -131,6 +131,7 @@ class CommandRemindMe :
 
                 "Successfully cancelled reminder for <@${reminder.member_id}> ${reminder.message.truncate(20)}"
             }
+
             else -> "You can only cancel your own reminders"
         }
 
@@ -181,6 +182,7 @@ class CommandRemindMe :
                     Expiry **❱** <t:${reminder.expiry}:R>
                 """.trimIndent()
             }
+
             else -> true to "You can only get info for your own reminders"
         }
 

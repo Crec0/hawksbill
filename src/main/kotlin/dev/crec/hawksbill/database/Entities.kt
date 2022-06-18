@@ -1,4 +1,4 @@
-package club.mindtech.mindbot.database
+package dev.crec.hawksbill.database
 
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

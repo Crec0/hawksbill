@@ -1,11 +1,10 @@
-package club.mindtech.mindbot.commands.poll
+package dev.crec.hawksbill.commands.poll
 
-import club.mindtech.mindbot.commands.BaseCommand
-import club.mindtech.mindbot.database.Poll
-import club.mindtech.mindbot.database.getCollection
-import club.mindtech.mindbot.util.EMPTY
-import club.mindtech.mindbot.util.zFill
-import dev.minn.jda.ktx.interactions.commands.Option
+import dev.crec.hawksbill.commands.BaseCommand
+import dev.crec.hawksbill.database.Poll
+import dev.crec.hawksbill.database.getCollection
+import dev.crec.hawksbill.util.EMPTY
+import dev.crec.hawksbill.util.zFill
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
 import dev.minn.jda.ktx.messages.Embed
@@ -28,21 +27,17 @@ private const val IMAGE_NAME = "poll.png"
 class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<option>...]") {
 
     override fun getCommandData(): SlashCommandData {
-
-        val options =
-            IntRange(1, 20)
-                .map {
-                    Option<String>("option-${zFill(it, 2)}", "Option $it for the poll")
-                }
-
-        return super.getCommandData()
-            .subcommand("create", "Create a poll") {
+        return super.getCommandData {
+            subcommand("create", "Create a poll") {
                 option<String>("question", "The question for the poll", true)
-                    .addOptions(options)
+                IntRange(1, 20).map { index ->
+                    option<String>("option-${zFill(index, 2)}", "Option $index for the poll")
+                }
             }
-            .subcommand("end", "End a poll") {
+            subcommand("end", "End a poll") {
                 option<String>("poll-id", "The id of the poll to end")
             }
+        }
     }
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {
