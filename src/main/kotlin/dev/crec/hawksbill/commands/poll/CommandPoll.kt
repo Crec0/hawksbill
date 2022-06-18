@@ -8,6 +8,7 @@ import dev.crec.hawksbill.util.zFill
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
 import dev.minn.jda.ktx.messages.Embed
+import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
@@ -51,6 +52,15 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         val allOptions = event.options.map { it.asString }.toList()
 
         val question = allOptions[0]
+
+        if (question.length > MessageEmbed.TITLE_MAX_LENGTH) {
+            event
+                .deferReply(true)
+                .setContent("Question must be less than 256 characters")
+                .queue()
+            return
+        }
+
         val distinctOptions = allOptions.subList(1, allOptions.size).distinct()
         val options = getSelectOptions(distinctOptions)
 
