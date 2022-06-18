@@ -29,9 +29,7 @@ private var isDevelopment = false
 fun isDevelopment() = isDevelopment
 
 fun main(vararg args: String) {
-    println(isDevelopment())
     isDevelopment = args.contains("dev")
-    println(isDevelopment())
     log.info("${bot.jda.selfUser.name} is now online!")
 }
 
