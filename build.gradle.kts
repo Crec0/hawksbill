@@ -51,12 +51,6 @@ tasks.compileKotlin {
     delete("build")
 }
 
-tasks.build {
-    doLast {
-        delete("build/libs/$projectName.jar")
-    }
-}
-
 tasks.withType<ShadowJar> {
-    archiveFileName.set("$projectName-$botVersion.jar")
+    archiveFileName.set("$projectName.jar")
 }
