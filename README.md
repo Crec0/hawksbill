@@ -1,8 +1,8 @@
-# Mindbot
+# HawksBill
 
 ## Overview
 
-Mindtech Technical Server's custom bot that provides a moderation, administration, rcon, chatlink, and many more features.
+A discord bot that provides a moderation, administration, rcon, chatlink, and many more features.
 
 For all the features, please refer to [Features](Features.md).
 
@@ -51,7 +51,7 @@ docker run --env TOKEN="DISCORD_TOKEN" <botname>:<tag>
 ### Source
 ```shell
 # Clone the project
-git clone https://github.com/MindTechMC/MindBot
+git clone https://github.com/Crec0/HawksBill
 
 # Change directory to the project
 cd MindBot
