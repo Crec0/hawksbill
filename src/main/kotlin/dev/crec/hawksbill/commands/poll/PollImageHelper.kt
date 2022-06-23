@@ -3,8 +3,10 @@ package dev.crec.hawksbill.commands.poll
 import dev.crec.hawksbill.database.Poll
 import dev.crec.hawksbill.helpers.Colors
 import dev.crec.hawksbill.helpers.image
+import dev.crec.hawksbill.helpers.ptToPx
 import dev.crec.hawksbill.helpers.rect
 import dev.crec.hawksbill.helpers.text
+import dev.crec.hawksbill.log
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
@@ -75,8 +77,8 @@ fun createPollResultsImage(poll: Poll): ByteArray {
             color = Colors.BLUE_GRAY_600
         )
 
-        val maxWidthLabel = poll.options.values.maxByOrNull { it.length } ?: ""
-        val maxLabelWidth = fontMetrics.stringWidth(maxWidthLabel)
+        val maxWidthLabel = poll.options.keys.maxByOrNull { it.length } ?: ""
+        val maxLabelWidth = fontMetrics.stringWidth(maxWidthLabel).ptToPx()
 
         poll.options.keys.forEachIndexed { index, label ->
 
@@ -84,17 +86,8 @@ fun createPollResultsImage(poll: Poll): ByteArray {
             val percentage = (votes * 100) / totalVotes
             val rectWidth = percentage * rectSliceSize
 
-            rect(
-                x = maxLabelWidth + spacing * 2,
-                y = fontSize + (spacing * 2.5).toInt() + (index * (fontSize + spacing)) - 4,
-                width = rectWidth,
-                height = fontSize + 4,
-                color = rankingColor(rankings[label]!!),
-                fill = true
-            )
-
             val textY = (fontSize + spacing) * (2 + index)
-            val textWidth = fontMetrics.stringWidth(label)
+            val textWidth = fontMetrics.stringWidth(label).ptToPx()
 
             text(
                 x = maxLabelWidth - textWidth + spacing,
@@ -104,8 +97,17 @@ fun createPollResultsImage(poll: Poll): ByteArray {
                 color = Colors.BLUE_GRAY_600
             )
 
+            rect(
+                x = maxLabelWidth + textWidth + spacing * 2,
+                y = textY - fontSize,
+                width = rectWidth,
+                height = fontSize + 4,
+                color = rankingColor(rankings[label]!!),
+                fill = true
+            )
+
             text(
-                x = maxLabelWidth + spacing * 3 + rectWidth,
+                x = maxLabelWidth + textWidth + spacing * 3 + rectWidth,
                 y = textY,
                 text = "$votes [ $percentage % ]",
                 fontName = "Montserrat SemiBold",

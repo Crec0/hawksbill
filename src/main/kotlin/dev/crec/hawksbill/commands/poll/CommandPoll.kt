@@ -125,7 +125,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         deferredReply
             .setContent("Vote for ${poll.question}")
             .addActionRow(
-                SelectMenu.create(selectId).addOptions(poll.options.map { (k, v) -> SelectOption.of(k, v) }).build()
+                SelectMenu.create(selectId).addOptions(poll.options.map { (k, _) -> SelectOption.of(k, k) }).build()
             )
             .queue()
     }
