@@ -18,9 +18,9 @@ class CommandPing : BaseCommand("ping", "Returns the gateway ping of the user!",
                 Embed {
                     title = "Pong!"
                     description = """
-                    |**Gateway Ping**: ${event.jda.gatewayPing}ms
-                    |**Bot Ping**: ${ping}ms
-                    """.trimMargin()
+                    **Gateway Ping**: ${event.jda.gatewayPing}ms
+                    **Bot Ping**: ${ping}ms
+                    """.trimIndent()
                     color = 0x0FADED
                 }
             )
