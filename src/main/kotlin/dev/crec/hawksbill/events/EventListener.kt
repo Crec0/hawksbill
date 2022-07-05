@@ -4,12 +4,16 @@ import dev.crec.hawksbill.bot
 import dev.crec.hawksbill.commands.ID_SEPARATOR
 import dev.crec.hawksbill.commands.getCommand
 import dev.crec.hawksbill.log
+import dev.crec.hawksbill.network.Rcon
+import dev.crec.hawksbill.util.env
+import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.events.ReadyEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent
 import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent
 import net.dv8tion.jda.api.hooks.SubscribeEvent
 
 class EventListener {
@@ -45,6 +49,18 @@ class EventListener {
         executeSafely("Failed to execute $message") {
             log.info("Executing $message")
             getCommand(event.name)!!.onAutoComplete(event)
+        }
+    }
+
+    @SubscribeEvent
+    fun onMessage(event: MessageReceivedEvent) {
+        if (event.author.isBot) return
+
+        if (event.channel.id == env("CHAT_BRIDGE_CHANNEL")) {
+            val message = event.message.contentDisplay
+            runBlocking {
+                Rcon.getInstance().chatMessage("[${event.author.name}] $message")
+            }
         }
     }
 

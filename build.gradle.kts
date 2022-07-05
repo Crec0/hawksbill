@@ -22,6 +22,7 @@ repositories {
 dependencies {
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
 
     // JDA
     implementation("net.dv8tion:JDA:5.0.0-alpha.12")

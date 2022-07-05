@@ -4,6 +4,7 @@ import com.mongodb.client.MongoDatabase
 import dev.crec.hawksbill.commands.getSlashCommandData
 import dev.crec.hawksbill.database.initDatabase
 import dev.crec.hawksbill.events.EventListener
+import dev.crec.hawksbill.network.Connection
 import dev.crec.hawksbill.util.env
 import dev.minn.jda.ktx.interactions.commands.updateCommands
 import net.dv8tion.jda.api.JDA
@@ -31,6 +32,7 @@ fun isDevelopment() = isDevelopment
 fun main(vararg args: String) {
     isDevelopment = args.contains("dev")
     log.info("${bot.jda.selfUser.name} is now online!")
+    Thread { Connection().startConnection() }.start()
 }
 
 inline fun <reified T : Any> initOrExit(block: () -> T): T {
