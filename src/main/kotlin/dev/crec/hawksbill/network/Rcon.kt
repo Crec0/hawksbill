@@ -30,6 +30,15 @@ class RconImpl : Rcon {
     private val socket = SocketChannel.open(InetSocketAddress(env("RCON_IP"), env("RCON_PORT").toInt()))
     private val requestCounter = AtomicInteger(0)
     private val readingBuffer = ByteBuffer.allocate(MAX_READ_LENGTH).order(ByteOrder.LITTLE_ENDIAN)
+    private val lgray = "§7"
+    private val escapedPattern = Regex("\\\\([_*].+)") to "$1"
+    private val formattingMap = listOf(
+        Regex("(?<!\\\\)\\*\\*(.*)\\*\\*")    to  "§l$1$lgray", // bold
+        Regex("(?<!\\\\)__(.*)__")            to  "§n$1$lgray", // underline
+        Regex("(?<!\\\\)\\*(.*)\\*")          to  "§o$1$lgray", // italic
+        Regex("(?<!\\\\)_([^_ ]+)_")          to  "§o$1$lgray", // italic
+        Regex("(?<!\\\\)~~(.*)~~")            to  "§m$1$lgray", // strike through
+    )
 
     override suspend fun login() {
         val password = env("RCON_PASSWORD")
@@ -45,10 +54,25 @@ class RconImpl : Rcon {
                 RconPacket(
                     requestCounter.incrementAndGet(),
                     RconType.CHAT_BRIDGE,
-                    chunk.toByteArray()
+                    sanitizeAndColor(chunk).toByteArray()
                 )
             )
         }
+    }
+
+    private fun sanitizeAndColor(message: String): String {
+        return "$lgray${sanitize(message)}"
+    }
+
+    private fun sanitize(message: String): String {
+        var sanitizedMessage = message
+        formattingMap.forEach { pair ->
+            sanitizedMessage = pair.first.replace(sanitizedMessage, pair.second)
+        }
+        if (escapedPattern.first.containsMatchIn(sanitizedMessage)) {
+            sanitizedMessage = escapedPattern.first.replace(sanitizedMessage, escapedPattern.second)
+        }
+        return sanitizedMessage
     }
 
     override suspend fun send(packet: RconPacket): RconPacket {

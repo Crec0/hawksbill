@@ -19,6 +19,7 @@ class Connection {
             try {
                 val socket = serverSocket.accept()
                 socket.soTimeout = 500
+                log.info("${socket.inetAddress}")
                 if (!socket.inetAddress.isSiteLocalAddress) {
                     log.info("is not loopback?")
                     continue
