@@ -3,12 +3,11 @@ package dev.crec.hawksbill.commands.poll
 import dev.crec.hawksbill.database.Poll
 import dev.crec.hawksbill.helpers.Colors
 import dev.crec.hawksbill.helpers.image
-import dev.crec.hawksbill.helpers.ptToPx
 import dev.crec.hawksbill.helpers.rect
 import dev.crec.hawksbill.helpers.text
-import dev.crec.hawksbill.log
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
+import kotlin.math.max
 
 enum class PollButtons(val value: String) {
     VOTE("Vote"),
@@ -42,13 +41,14 @@ private fun sortVotesToRanks(ranks: List<Pair<String, Int>>): Map<String, Int> {
 }
 
 fun createPollResultsImage(poll: Poll): ByteArray {
-    val spacing = 8
-    val fontSize = 18
+    val spacing = 10
+    val fontSize = 20
     val imgWidth = 512
+    val fontName = "Montserrat SemiBold"
 
     val rectSliceSize = 3
 
-    val imgHeight = fontSize + spacing * 2 + (poll.options.size * (fontSize + spacing))
+    val imgHeight = fontSize + spacing * 3 + (poll.options.size * (fontSize + spacing))
 
     val groupedVotes = poll
         .votes
@@ -73,12 +73,12 @@ fun createPollResultsImage(poll: Poll): ByteArray {
             x = spacing,
             y = spacing + fontSize,
             text = "Poll Results",
-            fontName = "Montserrat SemiBold",
+            fontName = fontName,
             color = Colors.BLUE_GRAY_600
         )
 
         val maxWidthLabel = poll.options.keys.maxByOrNull { it.length } ?: ""
-        val maxLabelWidth = fontMetrics.stringWidth(maxWidthLabel).ptToPx()
+        val maxLabelWidth = max(fontMetrics.stringWidth(maxWidthLabel), 40)
 
         poll.options.keys.forEachIndexed { index, label ->
 
@@ -87,18 +87,18 @@ fun createPollResultsImage(poll: Poll): ByteArray {
             val rectWidth = percentage * rectSliceSize
 
             val textY = (fontSize + spacing) * (2 + index)
-            val textWidth = fontMetrics.stringWidth(label).ptToPx()
+            val textWidth = fontMetrics.stringWidth(label)
 
             text(
                 x = maxLabelWidth - textWidth + spacing,
                 y = textY,
                 text = label,
-                fontName = "Montserrat SemiBold",
+                fontName = fontName,
                 color = Colors.BLUE_GRAY_600
             )
 
             rect(
-                x = maxLabelWidth + textWidth + spacing * 2,
+                x = maxLabelWidth + spacing * 2,
                 y = textY - fontSize,
                 width = rectWidth,
                 height = fontSize + 4,
@@ -107,10 +107,10 @@ fun createPollResultsImage(poll: Poll): ByteArray {
             )
 
             text(
-                x = maxLabelWidth + textWidth + spacing * 3 + rectWidth,
+                x = maxLabelWidth + spacing * 3 + rectWidth,
                 y = textY,
                 text = "$votes [ $percentage % ]",
-                fontName = "Montserrat SemiBold",
+                fontName = fontName,
                 color = Colors.BLUE_GRAY_600
             )
         }

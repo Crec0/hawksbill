@@ -38,6 +38,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
             subcommand("end", "End a poll") {
                 option<String>("poll-id", "The id of the poll to end")
             }
+//            subcommand("test", "testing")
         }
     }
 
@@ -45,6 +46,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         when (event.commandPath) {
             "${this.name}/create" -> handlePollCreate(event)
             "${this.name}/end" -> handlePollEnd(event)
+//            "${this.name}/test" -> handlePollTest(event)
         }
     }
 
@@ -187,6 +189,19 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         deletePoll(id)
         event.deferReply(true).setContent("Poll $id successfully ended").queue()
     }
+
+//    private fun handlePollTest(event: SlashCommandInteractionEvent) {
+//        val poll =
+//            Poll("1", "954894993871482950", "w", getSelectOptions(listOf()), mapOf("1" to "Upvote", "4" to "Upvote", "2" to "Downvote"))
+//
+//        event.reply_(
+//            embed = Embed {
+//                color = 0x06B6D4
+//                image = "attachment://$IMAGE_NAME"
+//            },
+//            file = NamedFile(IMAGE_NAME, createPollResultsImage(poll).inputStream())
+//        ).queue()
+//    }
 
     private fun createPollEntry(messageId: String, channelId: String, question: String, options: Map<String, String>) {
         getCollection<Poll>().insertOne(
