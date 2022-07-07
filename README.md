@@ -50,7 +50,7 @@ gradlew run
 - Get from `builds/libs` directory if you choose to Build it yourself using [Build Jar](#build-jar)
 ```shell
 # Run the jar
-java -jar HawksBill.jar DISOCRD_TOKEN
+java -jar HawksBill.jar
 ```
 ### Issues
 
