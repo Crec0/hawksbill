@@ -49,19 +49,15 @@ class RconImpl : Rcon {
     }
 
     override suspend fun chatMessage(message: String) {
-        message.chunked(MAX_PAYLOAD_LENGTH).forEach { chunk ->
+        sanitize(message).chunked(MAX_PAYLOAD_LENGTH).forEach { chunk ->
             send(
                 RconPacket(
                     requestCounter.incrementAndGet(),
                     RconType.CHAT_BRIDGE,
-                    sanitizeAndColor(chunk).toByteArray()
+                    chunk.toByteArray()
                 )
             )
         }
-    }
-
-    private fun sanitizeAndColor(message: String): String {
-        return "$lgray${sanitize(message)}"
     }
 
     private fun sanitize(message: String): String {
