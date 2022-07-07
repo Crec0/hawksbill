@@ -4,7 +4,7 @@ import dev.crec.hawksbill.bot
 import dev.crec.hawksbill.commands.ID_SEPARATOR
 import dev.crec.hawksbill.commands.getCommand
 import dev.crec.hawksbill.log
-import dev.crec.hawksbill.network.Rcon
+import dev.crec.hawksbill.network.rconInstance
 import dev.crec.hawksbill.util.env
 import kotlinx.coroutines.runBlocking
 import net.dv8tion.jda.api.events.ReadyEvent
@@ -59,7 +59,7 @@ class EventListener {
         if (event.channel.id == env("CHAT_BRIDGE_CHANNEL")) {
             val message = event.message.contentDisplay
             runBlocking {
-                Rcon.getInstance().chatMessage("[${event.author.name}] $message")
+                rconInstance().chatMessage("[${event.member!!.effectiveName}] $message")
             }
         }
     }

@@ -17,14 +17,13 @@ const val MAX_WRITE_LENGTH = 1460
 const val MAX_PAYLOAD_LENGTH = MAX_WRITE_LENGTH - Integer.BYTES * 3 - Byte.SIZE_BYTES * 2
 
 sealed interface Rcon {
-    companion object {
-        fun getInstance() = RconImpl()
-    }
-
     suspend fun login()
     suspend fun chatMessage(message: String)
     suspend fun send(packet: RconPacket): RconPacket
 }
+
+private var rconInstance = RconImpl() // This instance is refreshed on disconnect
+fun rconInstance() = rconInstance
 
 class RconImpl : Rcon {
     private val socket = SocketChannel.open(InetSocketAddress(env("RCON_IP"), env("RCON_PORT").toInt()))
@@ -74,9 +73,14 @@ class RconImpl : Rcon {
     override suspend fun send(packet: RconPacket): RconPacket {
         val id = packet.requestId
         return withContext(Dispatchers.IO) {
-            val bytesWritten = socket.write(packet.write())
-//            log.info("$bytesWritten")
-            awaitRead(id)
+            try {
+                socket.write(packet.write())
+                awaitRead(id)
+            } catch (e: IOException) {
+                rconInstance = RconImpl() // Refresh the instance.
+                log.warn("Disconnected: ${e.message}")
+                RconPacket()
+            }
         }
     }
 
@@ -99,7 +103,7 @@ class RconImpl : Rcon {
 class RconPacket(
     val requestId: Int = 0,
     val type: RconType = RconType.UNKNOWN,
-    val payload: ByteArray = ByteArray(0)
+    private val payload: ByteArray = ByteArray(0)
 ) {
     fun read(expectedId: Int, data: ByteBuffer): RconPacket {
         val length = data.int
