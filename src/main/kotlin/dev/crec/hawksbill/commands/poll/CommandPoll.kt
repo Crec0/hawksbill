@@ -29,14 +29,14 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
 
     override fun getCommandData(): SlashCommandData {
         return super.getCommandData {
-            subcommand("create", "Create a poll") {
-                option<String>("question", "The question for the poll", true)
+            subcommand(name = "create", description = "Create a poll") {
+                option<String>(name = "question", description = "The question for the poll", required = true)
                 IntRange(1, 20).map { index ->
                     option<String>("option-${zFill(index, 2)}", "Option $index for the poll")
                 }
             }
-            subcommand("end", "End a poll") {
-                option<String>("poll-id", "The id of the poll to end")
+            subcommand(name = "end", description = "End a poll") {
+                option<String>(name = "poll-id", description = "The id of the poll to end", required = true)
             }
 //            subcommand("test", "testing")
         }
@@ -152,7 +152,6 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
     }
 
     private fun getJoinedOptions(options: List<String>): String {
-
         return IntRange(0, options.size - 1)
             .joinToString("\n") {
                 ":regional_indicator_${('a'.code + it).toChar()}: ${"**❱**"} ${options[it]}"
