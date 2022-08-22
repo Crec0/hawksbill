@@ -22,14 +22,14 @@ repositories {
 dependencies {
     // Kotlin
     implementation("org.jetbrains.kotlin:kotlin-stdlib")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
 
     // JDA
-    implementation("net.dv8tion:JDA:5.0.0-alpha.12")
-    implementation("com.github.minndevelopment:jda-ktx:78e74bc45b8d73a5d7974ef0d5f8efdd5d97910f")
+    implementation("net.dv8tion:JDA:5.0.0-alpha.18")
+    implementation("com.github.minndevelopment:jda-ktx:081a17728163d978670757b2122381bbb662e731")
 
     // Database
-    implementation("org.litote.kmongo:kmongo-serialization:4.5.1")
+    implementation("org.litote.kmongo:kmongo-serialization:4.7.0")
 
     // Serialization
     implementation("org.jetbrains.kotlin:kotlin-serialization:1.7.0")
@@ -40,17 +40,17 @@ dependencies {
     implementation("ch.qos.logback:logback-core:1.2.11")
 
     // calculator
-    implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.0.2")
+    implementation("org.mariuszgromada.math:MathParser.org-mXparser:5.0.6")
 }
 
 application.apply {
     mainClass.set("dev.crec.hawksbill.HawksBillKt")
 }
 
-tasks.compileKotlin {
-    println("Deleting old classes")
-    delete("build")
-}
+//tasks.compileKotlin {
+//    println("Deleting old classes")
+//    delete("build")
+//}
 
 tasks.withType<ShadowJar> {
     archiveFileName.set("$projectName.jar")

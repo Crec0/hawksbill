@@ -34,7 +34,7 @@ class Connection {
     private fun replaceEmotes(message: String): String {
         return message.replace(":(\\w+):".toRegex()) {
             val emoteName = it.groups[1]!!.value
-            val candidateEmotes = bot.jda.getEmotesByName(emoteName, false)
+            val candidateEmotes = bot.jda.getEmojisByName(emoteName, false)
             return@replace if (candidateEmotes.size > 0) {
                 candidateEmotes[0].asMention
             } else {
@@ -73,6 +73,6 @@ class Connection {
         val message = payload.toString(StandardCharsets.UTF_8)
 
         val channel = bot.jda.getTextChannelById(env("CHAT_BRIDGE_CHANNEL")) ?: return
-        channel.sendMessage(replaceEmotes(message)).allowedMentions(listOf(MentionType.USER)).queue()
+        channel.sendMessage(replaceEmotes(message)).setAllowedMentions(listOf(MentionType.USER)).queue()
     }
 }

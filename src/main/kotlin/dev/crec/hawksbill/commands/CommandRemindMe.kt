@@ -188,7 +188,7 @@ class CommandRemindMe : BaseCommand(
 
         event.deferReply(ephemeral)
             .setContent(content)
-            .allowedMentions(listOf(Message.MentionType.CHANNEL))
+            .setAllowedMentions(listOf(Message.MentionType.CHANNEL))
             .queue()
     }
 

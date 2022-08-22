@@ -16,12 +16,8 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
-import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.keyProjection
-import org.litote.kmongo.setTo
-import org.litote.kmongo.unset
-import org.litote.kmongo.updateOne
+import net.dv8tion.jda.api.utils.FileUpload
+import org.litote.kmongo.*
 
 private const val IMAGE_NAME = "poll.png"
 
@@ -110,7 +106,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
         val memberId = event.user.id
         val selected = event.selectedOptions.first().label
         updatePollEntry(idArgs[0], memberId, selected)
-        event.deferEdit().setContent("Your vote has been recorded").setActionRows().queue()
+        event.deferEdit().setContent("Your vote has been recorded").setComponents().queue()
     }
 
     private fun handleVote(event: ButtonInteractionEvent, pollID: String) {
@@ -181,7 +177,7 @@ class CommandPoll : BaseCommand("poll", "Create a poll", "poll <question> [<opti
             }
             message
                 .editMessageEmbeds(*message.embeds.toTypedArray(), resultEmbed)
-                .addFile(createPollResultsImage(poll), IMAGE_NAME)
+                .setFiles(FileUpload.fromData(createPollResultsImage(poll), IMAGE_NAME))
                 .flatMap { it.editMessageComponents() }
                 .queue()
         }
