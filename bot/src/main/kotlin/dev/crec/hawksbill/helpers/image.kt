@@ -1,14 +1,10 @@
 package dev.crec.hawksbill.helpers
 
-import java.awt.AlphaComposite
 import java.awt.Color
 import java.awt.Font
 import java.awt.Graphics2D
-import java.awt.RenderingHints
 import java.awt.Toolkit
 import java.awt.image.BufferedImage
-import java.io.File
-import javax.imageio.ImageIO
 
 enum class Colors(val hex: Int) {
     BLUE_GRAY_600(0x475569),

@@ -4,13 +4,11 @@ import com.mongodb.client.MongoDatabase
 import dev.crec.hawksbill.commands.getSlashCommandData
 import dev.crec.hawksbill.database.initDatabase
 import dev.crec.hawksbill.events.EventListener
-import dev.crec.hawksbill.network.Connection
 import dev.crec.hawksbill.util.env
 import dev.minn.jda.ktx.interactions.commands.updateCommands
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager
-import org.mariuszgromada.math.mxparser.mathcollection.BooleanAlgebra.T
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import kotlin.system.exitProcess
@@ -32,7 +30,6 @@ fun isDevelopment() = isDevelopment
 fun main(vararg args: String) {
     isDevelopment = args.contains("dev")
     log.info("${bot.jda.selfUser.name} is now online!")
-    Thread { Connection().startConnection() }.start()
 }
 
 inline fun <reified T : Any> initOrExit(block: () -> T): T {

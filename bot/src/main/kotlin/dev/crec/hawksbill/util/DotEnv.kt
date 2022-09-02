@@ -8,7 +8,7 @@ private val envVars: MutableMap<String, String> = mutableMapOf()
 fun readEnvFile() {
     if (envVars.isNotEmpty()) return
 
-    File(".env").bufferedReader().forEachLine {
+    File("../.env").bufferedReader().forEachLine {
         if (it.isBlank() || it.startsWith("#")) return@forEachLine
 
         if (!it.contains("=")) {

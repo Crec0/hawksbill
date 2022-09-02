@@ -1,1 +1,4 @@
-rootProject.name = "HawksBill"
+rootProject.name = "hawksbill"
+
+include(":bot")
+include(":modules:chatbridge")
