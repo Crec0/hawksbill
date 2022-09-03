@@ -1,7 +1,6 @@
 package dev.crec.hawksbill.events
 
 import dev.crec.hawksbill.bot
-import dev.crec.hawksbill.commands.ID_SEPARATOR
 import dev.crec.hawksbill.commands.getCommand
 import dev.crec.hawksbill.log
 import net.dv8tion.jda.api.events.ReadyEvent
@@ -22,7 +21,7 @@ class EventListener {
 
     @SubscribeEvent
     fun onComponent(event: GenericComponentInteractionCreateEvent) {
-        val idArgs = event.componentId.split(ID_SEPARATOR)
+        val idArgs = event.componentId.split(":")
         val command = getCommand(idArgs[0])!!
         when (event) {
             is ButtonInteractionEvent -> command.onButtonInteraction(event, idArgs.subList(1, idArgs.size))

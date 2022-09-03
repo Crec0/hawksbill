@@ -1,5 +1,7 @@
 package dev.crec.hawksbill.commands
 
+import dev.crec.hawksbill.api.command.ICommand
+import dev.crec.hawksbill.commands
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.messages.EmbedBuilder
 import net.dv8tion.jda.api.entities.MessageEmbed
@@ -28,25 +30,25 @@ class CommandHelp : BaseCommand("help", "Shows information about other commands"
 
     override fun onAutoComplete(event: CommandAutoCompleteInteractionEvent) {
         val userInput = event.focusedOption.value
-        val matchingCommands = getRegisteredCommands().keys.filter { it.contains(userInput) }
+        val matchingCommands = commands.keys.filter { it.contains(userInput) }
         event.replyChoiceStrings(matchingCommands).queue()
     }
 
     private fun getHelpEmbed(author: User, commandName: String?): MessageEmbed {
-        val command: BaseCommand? = getCommand(commandName)
+        val command: ICommand? = getCommand(commandName)
 
         val titleString = if (commandName == null) {
             "All Available commands"
         } else if (command == null) {
             "Command not found"
         } else {
-            "Help for command: ${command.name}"
+            "Help for command: ${command}"
         }
 
         val builder = EmbedBuilder {
             title = titleString
             color = 0x1dd1a1
-            description = command?.description ?: availableCommands()
+//            description = command?.description ?: availableCommands()
             footer {
                 name = "Requested by ${author.name}"
             }
@@ -55,7 +57,7 @@ class CommandHelp : BaseCommand("help", "Shows information about other commands"
         command?.let {
             builder.field {
                 name = "Usage:"
-                value = command.usage
+                value = "command.usage"
                 inline = true
             }
         }
@@ -66,7 +68,7 @@ class CommandHelp : BaseCommand("help", "Shows information about other commands"
     private fun availableCommands(): String {
         return """
             Available commands:
-            ${getRegisteredCommands().keys.joinToString("\n") { "**»** $it" }}
+//            ${commands.keys.joinToString("\n") { "**»** $it" }}
             """
     }
 }

@@ -1,4 +1,6 @@
 rootProject.name = "hawksbill"
 
-include(":bot")
+include("core", "api")
+
 include(":modules:chatbridge")
+include(":modules:utility")
