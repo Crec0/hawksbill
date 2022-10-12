@@ -4,9 +4,9 @@ plugins {
 
 repositories {
     gradlePluginPortal()
+    mavenCentral()
 }
 
 dependencies {
-    implementation(kotlin(module = "gradle-plugin"))
-    implementation("com.github.johnrengelman.shadow", "com.github.johnrengelman.shadow.gradle.plugin", "7.1.2")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
 }

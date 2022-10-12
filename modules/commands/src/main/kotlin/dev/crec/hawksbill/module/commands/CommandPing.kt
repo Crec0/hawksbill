@@ -1,19 +1,20 @@
-package dev.crec.hawksbill.utility.command
+package dev.crec.hawksbill.module.commands
 
-import dev.crec.hawksbill.api.annotation.Command
+import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
+import dev.minn.jda.ktx.interactions.commands.Command
 import dev.minn.jda.ktx.messages.Embed
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import java.time.Instant
 import kotlin.random.Random
 
 
-@Command(
-    name = "ping",
-    description = "Returns the gateway ping of the user!",
-    usage = "ping"
-)
+@SlashCommandMarker
 class CommandPing : ICommand {
+    override fun commandData() = Command(
+        "ping",
+        "Returns the gateway ping of the user"
+    )
 
     override fun onSlashCommand(event: SlashCommandInteractionEvent) {
 
