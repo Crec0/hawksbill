@@ -5,6 +5,7 @@ import kotlin.random.Random
 
 const val EMPTY = "\u180E"
 const val SPACE_1EM = "\u2003"
+const val NBSP = "\u00A0"
 
 private const val HEX = "0123456789abcdef"
 private const val RANDOM_BYTES_LIMIT = 32
@@ -24,3 +25,6 @@ fun StringBuilder.newLine(): StringBuilder {
     this.append("\n")
     return this
 }
+
+fun alignStringPair(pair: Pair<String, String>, widthOfFirst: Int) =
+    "${pair.first}${NBSP.repeat(widthOfFirst + 5)}${pair.second}"
