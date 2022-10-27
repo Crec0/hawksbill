@@ -8,7 +8,6 @@ import dev.crec.hawksbill.api.util.EMPTY
 import dev.crec.hawksbill.api.util.image
 import dev.crec.hawksbill.api.util.rect
 import dev.crec.hawksbill.api.util.text
-import dev.crec.hawksbill.api.util.zFill
 import dev.crec.hawksbill.module.database.Poll
 import dev.minn.jda.ktx.interactions.commands.Command
 import dev.minn.jda.ktx.interactions.commands.option
@@ -50,7 +49,7 @@ class CommandPoll : ICommand {
             )
             IntRange(1, 20).map { index ->
                 option<String>(
-                    "option-${index.zFill(2)}",
+                    "option-${index.toString().padStart(2, '0')}",
                     "Option $index for the poll"
                 )
             }
