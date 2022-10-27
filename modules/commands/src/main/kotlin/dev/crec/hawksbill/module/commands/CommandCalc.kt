@@ -9,7 +9,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.mariuszgromada.math.mxparser.Expression
 
 @SlashCommandMarker
-class CommandCalc: ICommand {
+class CommandCalc : ICommand {
 
     override fun commandData(): SlashCommandData {
         return Command(
