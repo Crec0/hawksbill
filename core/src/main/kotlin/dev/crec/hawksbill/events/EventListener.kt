@@ -4,8 +4,9 @@ import dev.crec.hawksbill.api.HawksBill
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.EntitySelectInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteractionCreateEvent
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.SubscribeEvent
 
@@ -21,8 +22,9 @@ class EventListener {
         val idArgs = event.componentId.split(":")
         val command = HawksBill.commands[idArgs[0]]!!
         when (event) {
-            is ButtonInteractionEvent -> command.onButtonInteraction(event, idArgs.subList(1, idArgs.size))
-            is SelectMenuInteractionEvent -> command.onMenuInteraction(event, idArgs.subList(1, idArgs.size))
+            is ButtonInteractionEvent -> command.onButton(event, idArgs.subList(1, idArgs.size))
+            is StringSelectInteractionEvent -> command.onStringSelectMenu(event, idArgs.subList(1, idArgs.size))
+            is EntitySelectInteractionEvent -> command.onEntitySelectMenu(event, idArgs.subList(1, idArgs.size))
         }
     }
 

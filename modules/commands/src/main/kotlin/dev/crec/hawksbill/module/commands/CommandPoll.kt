@@ -16,10 +16,10 @@ import dev.minn.jda.ktx.messages.Embed
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
-import net.dv8tion.jda.api.events.interaction.component.SelectMenuInteractionEvent
+import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.interactions.components.buttons.Button
-import net.dv8tion.jda.api.interactions.components.selections.SelectMenu
 import net.dv8tion.jda.api.interactions.components.selections.SelectOption
+import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.utils.FileUpload
 import org.litote.kmongo.eq
 import org.litote.kmongo.findOne
@@ -123,14 +123,14 @@ class CommandPoll : ICommand {
             }
     }
 
-    override fun onButtonInteraction(event: ButtonInteractionEvent, ids: List<String>) {
+    override fun onButton(event: ButtonInteractionEvent, ids: List<String>) {
         when (ids[0]) {
             PollButtons.VOTE.value -> handleVote(event, ids[1])
             PollButtons.RETRACT.value -> handleRetract(event, ids[1])
         }
     }
 
-    override fun onMenuInteraction(event: SelectMenuInteractionEvent, ids: List<String>) {
+    override fun onStringSelectMenu(event: StringSelectInteractionEvent, ids: List<String>) {
         val memberId = event.user.id
         val selected = event.selectedOptions.first().label
         updatePollEntry(ids[0], memberId, selected)
@@ -151,7 +151,9 @@ class CommandPoll : ICommand {
         deferredReply
             .setContent("Vote for ${poll.question}")
             .addActionRow(
-                SelectMenu.create(selectId).addOptions(poll.options.map { (k, _) -> SelectOption.of(k, k) }).build()
+                StringSelectMenu.create(selectId)
+                    .addOptions(poll.options.map { (k, _) -> SelectOption.of(k, k) })
+                    .build()
             )
             .queue()
     }
