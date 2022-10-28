@@ -1,6 +1,7 @@
 package dev.crec.hawksbill.events
 
 import dev.crec.hawksbill.api.HawksBill
+import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
@@ -26,6 +27,13 @@ class EventListener {
             is StringSelectInteractionEvent -> command.onStringSelectMenu(event, idArgs.subList(1, idArgs.size))
             is EntitySelectInteractionEvent -> command.onEntitySelectMenu(event, idArgs.subList(1, idArgs.size))
         }
+    }
+
+    @SubscribeEvent
+    fun onModal(event: ModalInteractionEvent) {
+        val idArgs = event.modalId.split(":")
+        val command = HawksBill.commands[idArgs[0]]!!
+        command.onModal(event, idArgs.subList(1, idArgs.size))
     }
 
     @SubscribeEvent
