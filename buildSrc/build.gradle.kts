@@ -4,9 +4,9 @@ plugins {
 
 repositories {
     gradlePluginPortal()
-    mavenCentral()
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+    implementation(kotlin(module = "gradle-plugin", version = "1.7.20"))
+    implementation(kotlin(module = "serialization", version = "1.7.20"))
 }

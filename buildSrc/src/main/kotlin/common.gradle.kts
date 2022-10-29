@@ -1,32 +1,31 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 repositories {
-    mavenCentral()
     maven {
         name = "Jitpack"
         url = uri("https://jitpack.io")
     }
+    gradlePluginPortal()
+    mavenCentral()
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+tasks {
+    afterEvaluate {
+        withType<KotlinCompile>().configureEach {
+            kotlinOptions {
+                jvmTarget = "17"
+                freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
+            }
+        }
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-
-    implementation("net.dv8tion:JDA:5.0.0-alpha.22")
-    implementation("com.github.minndevelopment:jda-ktx:fc7d7de58af04e25eb58c0e8b4923621e3179719")
-
-    implementation("ch.qos.logback:logback-classic:1.2.11")
-
-    implementation("org.litote.kmongo:kmongo-serialization:4.7.0")
-}
-
-kotlin {
-    jvmToolchain {
-        languageVersion.set(
-            JavaLanguageVersion.of(17)
-        )
+        java {
+            sourceCompatibility = JavaVersion.VERSION_17
+            targetCompatibility = JavaVersion.VERSION_17
+        }
     }
 }

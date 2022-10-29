@@ -3,11 +3,13 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     common
     application
-    id("com.github.johnrengelman.shadow") version "7.1.1"
+    alias(libs.plugins.shadow)
 }
 
 val projectName = "HawksBill"
 val botVersion = "1.0.0"
+
+application.mainClass.set("dev.crec.hawksbill.MainKt")
 
 dependencies {
     api(project(":api"))
@@ -15,14 +17,19 @@ dependencies {
 //    implementation(project(":modules:chatbridge"))
     implementation(project(":modules:commands"))
 
-    // Class graph for command registration
-    implementation("io.github.classgraph:classgraph:4.8.149")
-    // Yaml - For config
-    implementation("com.charleskorn.kaml:kaml:0.49.0")
-}
+    implementation(libs.coroutines)
+    implementation(libs.stdlib)
 
-application.apply {
-    mainClass.set("dev.crec.hawksbill.MainKt")
+    implementation(libs.jda)
+    implementation(libs.jda.ktx)
+
+    implementation(libs.logback)
+
+    implementation(libs.kmongo)
+
+    implementation(libs.classgraph)
+    implementation(libs.kaml)
+
 }
 
 tasks.withType<ShadowJar> {

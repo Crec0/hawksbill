@@ -9,6 +9,7 @@ import io.github.classgraph.ClassGraph
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager
 import org.litote.kmongo.KMongo
+import kotlin.system.measureTimeMillis
 
 val isDev = Env["ENVIRONMENT"].lowercase() == "dev"
 
@@ -28,15 +29,24 @@ private fun populateCommands(): Set<ICommand> {
 }
 
 fun main() {
+    HawksBill.logger.info("Initializing Hawksbill")
 
-    HawksBill.registerCommands(populateCommands())
+    HawksBill.logger.info("Populating commands")
+    val commandPopulationTime = measureTimeMillis {
+        HawksBill.registerCommands(populateCommands())
+    }
+    HawksBill.logger.info("${HawksBill.commands.size} commands populated in ${commandPopulationTime}ms")
 
+    HawksBill.logger.info("Initializing events")
     HawksBill.jda = JDABuilder.createDefault(Env["DISCORD_TOKEN"])
         .setEventManager(AnnotatedEventManager())
         .addEventListeners(EventListener())
         .build()
+    HawksBill.logger.info("Events initialized")
 
+    HawksBill.logger.info("Connecting to Database")
     HawksBill.database = KMongo.createClient(Env["DB_URL"]).getDatabase(Env["DB_NAME"])
+    HawksBill.logger.info("Database connected")
 
     HawksBill.logger.info("${HawksBill.jda.selfUser.name} is now online!")
 }

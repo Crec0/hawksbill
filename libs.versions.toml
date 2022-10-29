@@ -1,0 +1,27 @@
+[versions]
+jda        = "5.0.0-alpha.22"
+jda-ktx    = "fc7d7de58af04e25eb58c0e8b4923621e3179719"
+logback    = "1.2.11"
+kmongo     = "4.7.0"
+coroutines = "1.6.4"
+stdlib     = "1.7.20"
+mathparser = "5.0.7"
+classgraph = "4.8.149"
+kaml       = "0.49.0"
+shadow     = "7.1.1"
+
+
+[libraries]
+jda        = { module = "net.dv8tion:JDA"                                , version.ref = "jda" }
+jda-ktx    = { module = "com.github.minndevelopment:jda-ktx"             , version.ref = "jda-ktx" }
+logback    = { module = "ch.qos.logback:logback-classic"                 , version.ref = "logback" }
+kmongo     = { module = "org.litote.kmongo:kmongo-serialization"         , version.ref = "kmongo" }
+mathparser = { module = "org.mariuszgromada.math:MathParser.org-mXparser", version.ref = "mathparser" }
+classgraph = { module = "io.github.classgraph:classgraph"                , version.ref = "classgraph" }
+kaml       = { module = "com.charleskorn.kaml:kaml"                      , version.ref = "kaml" }
+
+coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core"  , version.ref = "coroutines" }
+stdlib     = { module = "org.jetbrains.kotlin:kotlin-stdlib"             , version.ref = "stdlib" }
+
+[plugins]
+shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow"}
