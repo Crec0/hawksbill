@@ -3,7 +3,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     common
     application
-    alias(libs.plugins.shadow)
+    id("com.github.johnrengelman.shadow") version("7.1.1")
 }
 
 val projectName = "HawksBill"

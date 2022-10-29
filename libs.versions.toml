@@ -8,7 +8,6 @@ stdlib     = "1.7.20"
 mathparser = "5.0.7"
 classgraph = "4.8.149"
 kaml       = "0.49.0"
-shadow     = "7.1.1"
 
 
 [libraries]
@@ -19,9 +18,5 @@ kmongo     = { module = "org.litote.kmongo:kmongo-serialization"         , versi
 mathparser = { module = "org.mariuszgromada.math:MathParser.org-mXparser", version.ref = "mathparser" }
 classgraph = { module = "io.github.classgraph:classgraph"                , version.ref = "classgraph" }
 kaml       = { module = "com.charleskorn.kaml:kaml"                      , version.ref = "kaml" }
-
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core"  , version.ref = "coroutines" }
 stdlib     = { module = "org.jetbrains.kotlin:kotlin-stdlib"             , version.ref = "stdlib" }
-
-[plugins]
-shadow = { id = "com.github.johnrengelman.shadow", version.ref = "shadow"}
