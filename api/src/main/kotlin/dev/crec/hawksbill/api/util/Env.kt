@@ -32,9 +32,9 @@ object Env {
         }
     }
 
-    operator fun get(key: String): String {
+    operator fun get(key: String, default: String? = null): String {
         readEnvFile()
-        return envVars[key] ?: throw IllegalStateException("Environment variable $key is not set")
+        return envVars[key] ?: (default ?: throw IllegalStateException("Environment variable for '$key' is not set. Please check your '.env' file."))
     }
 }
 

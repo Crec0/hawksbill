@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.hooks.AnnotatedEventManager
 import org.litote.kmongo.KMongo
 import kotlin.system.measureTimeMillis
 
-val isDev = Env["ENVIRONMENT"].lowercase() == "dev"
+val isDev = Env["ENVIRONMENT", "PROD"].lowercase() == "dev"
 
 private fun populateCommands(): Set<ICommand> {
     val commands = mutableSetOf<ICommand>()
