@@ -3,7 +3,6 @@ package dev.crec.hawksbill.module.commands
 import dev.crec.hawksbill.api.HawksBill
 import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
-import dev.crec.hawksbill.api.util.alignStringPair
 import dev.crec.hawksbill.api.util.newLine
 import dev.minn.jda.ktx.interactions.commands.Command
 import dev.minn.jda.ktx.interactions.commands.option
@@ -13,7 +12,8 @@ import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
-import net.dv8tion.jda.api.utils.MarkdownUtil
+import net.dv8tion.jda.api.utils.MarkdownUtil.bold
+import net.dv8tion.jda.api.utils.MarkdownUtil.codeblock
 
 @SlashCommandMarker
 class CommandHelp : ICommand {
@@ -57,7 +57,7 @@ class CommandHelp : ICommand {
         if (command == null) {
             builder.title = "Error"
             builder.color = 0xdc2626
-            builder.description = MarkdownUtil.codeblock("Unknown command: $commandName")
+            builder.description = codeblock("Unknown command: $commandName")
         } else {
             builder.title = command.name
             builder.color = 0x1dd1a1
@@ -68,27 +68,23 @@ class CommandHelp : ICommand {
     }
 
     private fun getPrettyCommandUsage(command: ICommand): String {
+        val cmdName = command.name
         return buildString {
 
-            append(MarkdownUtil.codeblock(command.description))
+            append(codeblock(command.description))
             newLine()
 
             val subcommands = command.commandData().subcommands
             if (subcommands.isEmpty())
                 return@buildString
 
-            append(MarkdownUtil.bold("Sub-commands:"))
-            newLine()
-            val longestCmd = subcommands.map { it.name }.maxOfOrNull { it.length } ?: 0
-
             subcommands.forEach { subCmd ->
-                append(
-                    MarkdownUtil.codeblock(
-                        alignStringPair(subCmd.name to subCmd.description, longestCmd - subCmd.name.length)
-                    )
-                )
+                append(bold("/$cmdName ${subCmd.name}"))
+                append(codeblock(subCmd.description))
+                newLine()
             }
 
+            deleteAt(length - 1)
         }
     }
 }
