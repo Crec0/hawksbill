@@ -10,11 +10,14 @@ import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteract
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.SubscribeEvent
+import org.slf4j.LoggerFactory
 
 class EventListener {
+    private val log = LoggerFactory.getLogger("${HawksBill.name}|EventListener")
+
     @SubscribeEvent
     fun onReady(event: ReadyEvent) {
-        HawksBill.logger.info("Registering commands for ${event.guildTotalCount} guilds")
+        log.info("Registering commands for ${event.guildTotalCount} guilds")
         HawksBill.updateCommands()
     }
 
@@ -40,7 +43,7 @@ class EventListener {
     fun onSlashCommand(event: SlashCommandInteractionEvent) {
         val message = "command for ${event.name} invoked by ${event.user.name}"
         executeSilently("Failed to execute $message") {
-            HawksBill.logger.info("Executing $message")
+            log.info("Executing $message")
             HawksBill.commands[event.name]!!.onSlashCommand(event)
         }
     }
@@ -49,7 +52,7 @@ class EventListener {
     fun onAutoComplete(event: CommandAutoCompleteInteractionEvent) {
         val message = "autocomplete for ${event.name} invoked by ${event.user.name}"
         executeSilently("Failed to execute $message") {
-            HawksBill.logger.info("Executing $message")
+            log.info("Executing $message")
             HawksBill.commands[event.name]!!.onAutoComplete(event)
         }
     }
@@ -58,11 +61,11 @@ class EventListener {
         try {
             invokable.invoke()
         } catch (e: Exception) {
-            HawksBill.logger.error(
+            log.error(
                 """
-                        $errorMessage: ${e.message}
-                        ${e.stackTraceToString()}
-                        """
+                $errorMessage: ${e.message}
+                ${e.stackTraceToString()}
+                """
             )
         }
     }

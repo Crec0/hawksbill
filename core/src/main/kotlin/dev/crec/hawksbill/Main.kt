@@ -6,47 +6,57 @@ import dev.crec.hawksbill.api.command.ICommand
 import dev.crec.hawksbill.api.util.Env
 import dev.crec.hawksbill.events.EventListener
 import io.github.classgraph.ClassGraph
+import io.github.classgraph.ScanResult
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager
 import org.litote.kmongo.KMongo
+import org.slf4j.LoggerFactory
 import kotlin.system.measureTimeMillis
 
-val isDev = Env["ENVIRONMENT", "PROD"].lowercase() == "dev"
+private val log = LoggerFactory.getLogger("${HawksBill.name}|Main")
 
 private fun populateCommands(): Set<ICommand> {
     val commands = mutableSetOf<ICommand>()
-    ClassGraph()
-        .enableClassInfo()
-        .enableAnnotationInfo()
-        .scan()
-        .use { result ->
-            result.getClassesWithAnnotation(SlashCommandMarker::class.java).forEach { classInfo ->
-                val cmdInstance = classInfo.loadClass().getConstructor().newInstance() as ICommand
-                commands.add(cmdInstance)
-            }
+    val classGraph = ClassGraph()
+
+    classGraph.apply {
+        enableClassInfo()
+        enableAnnotationInfo()
+    }
+
+    val scanResult: ScanResult
+    val timeTaken = measureTimeMillis { scanResult = classGraph.scan() }
+
+    scanResult.use { result ->
+        log.info("Scanned ${result.allClasses.size} classes in $timeTaken ms")
+        result.getClassesWithAnnotation(SlashCommandMarker::class.java).forEach { classInfo ->
+            val cmdInstance = classInfo.loadClass().getConstructor().newInstance() as ICommand
+            commands.add(cmdInstance)
         }
+    }
     return commands
 }
 
 fun main() {
-    HawksBill.logger.info("Initializing Hawksbill")
+    log.info("Initializing Hawksbill")
+    log.info("Populating commands")
 
-    HawksBill.logger.info("Populating commands")
-    val commandPopulationTime = measureTimeMillis {
-        HawksBill.registerCommands(populateCommands())
-    }
-    HawksBill.logger.info("${HawksBill.commands.size} commands populated in ${commandPopulationTime}ms")
+    HawksBill.registerCommands(populateCommands())
 
-    HawksBill.logger.info("Initializing events")
-    HawksBill.jda = JDABuilder.createDefault(Env["DISCORD_TOKEN"])
+    log.info("${HawksBill.commands.size} commands populated")
+    log.info("Initializing events")
+
+
+    HawksBill.jda = JDABuilder.createDefault(Env.get("DISCORD_TOKEN"))
         .setEventManager(AnnotatedEventManager())
         .addEventListeners(EventListener())
         .build()
-    HawksBill.logger.info("Events initialized")
 
-    HawksBill.logger.info("Connecting to Database")
-    HawksBill.database = KMongo.createClient(Env["DB_URL"]).getDatabase(Env["DB_NAME"])
-    HawksBill.logger.info("Database connected")
+    log.info("Events initialized")
+    log.info("Connecting to Database")
 
-    HawksBill.logger.info("${HawksBill.jda.selfUser.name} is now online!")
+    HawksBill.database = KMongo.createClient(Env.get("DB_URL")).getDatabase(Env.get("DB_NAME"))
+
+    log.info("Database connected")
+    log.info("${HawksBill.jda.selfUser.name} is now online!")
 }

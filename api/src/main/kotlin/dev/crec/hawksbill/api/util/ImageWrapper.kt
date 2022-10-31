@@ -66,19 +66,31 @@ fun Graphics2D.ellipse(
 }
 
 //fun main() {
-//    val yui = ImageIO.read(File("D:\\Git\\MindBot\\peppa.png"))
-//
+//    val initial = ImageIO.read(File("D:\\git\\Hawksbill\\initial.png"))
+
 //    val circleImage = image(128, 128) {
 //        setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
 //        ellipse(0, 0, 128, 128)
 //        composite = AlphaComposite.SrcIn
-//        drawImage(yui, null, null)
+//        drawImage(initial, null, null)
 //    }
 //
 //    val card = image(512, 256) {
 //        rect(0, 0, 512, 256, color = Colors.EMERALD_400, fill = true)
 //        drawImage(circleImage, 64, 64, 128, 128, null)
 //    }
+
+//    val raster = initial.raster
 //
-//    ImageIO.write(card, "png", File("D:\\Git\\MindBot\\test.png"))
+//    for (i in 0 until raster.width) {
+//        for (j in 0 until raster.height) {
+//            val rgb = raster.getPixel(i, j, IntArray(3))
+//            val transformed = rgb.map {
+//                ((200 - 55) * it) / (255) + 55
+//            }.toIntArray()
+//            raster.setPixel(i, j, transformed)
+//        }
+//    }
+//
+//    ImageIO.write(initial, "png", File("D:\\git\\Hawksbill\\result.png"))
 //}

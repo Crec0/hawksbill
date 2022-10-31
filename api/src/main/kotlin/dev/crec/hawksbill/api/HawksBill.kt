@@ -7,7 +7,8 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 
 object HawksBill {
-    val logger = LoggerFactory.getLogger(HawksBill::class.java) as Logger
+    const val name = "HawksBill"
+    val log = LoggerFactory.getLogger(name) as Logger
     val commands: Map<String, ICommand> = mutableMapOf()
 
     lateinit var database: MongoDatabase
@@ -22,10 +23,8 @@ object HawksBill {
     fun updateCommands() {
         val commandData = commands.values.map { cmd -> cmd.commandData() }
         jda.guilds.forEach { guild ->
-            guild.updateCommands().apply {
-                addCommands(commandData)
-            }.queue()
+            guild.updateCommands().addCommands(commandData).queue()
         }
-        logger.info("Registered ${commandData.size} commands for ${jda.guilds.size} guild(s)")
+        log.info("Registered ${commandData.size} commands for ${jda.guilds.size} guild(s)")
     }
 }

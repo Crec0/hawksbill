@@ -225,6 +225,6 @@ class CommandRemindMe : ICommand {
             > ${reminder.message}
             *Created: <t:${reminder.created}:R>*
             """.trimIndent()
-        )?.queue({}, { error -> HawksBill.logger.error("Error sending reminder message", error) })
+        )?.queue({}, { error -> HawksBill.log.error("Error sending reminder message", error) })
     }
 }

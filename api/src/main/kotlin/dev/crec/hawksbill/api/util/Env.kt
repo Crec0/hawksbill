@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory
 import java.io.File
 
 object Env {
-    private val log: Logger = LoggerFactory.getLogger("DotEnv")
+    private val log: Logger = LoggerFactory.getLogger("HawksBill|Env")
     private val envVars: MutableMap<String, String> = mutableMapOf()
 
     private fun readEnvFile() {
@@ -32,9 +32,15 @@ object Env {
         }
     }
 
-    operator fun get(key: String, default: String? = null): String {
+    fun getOrDefault(key: String, default: String? = null): String {
         readEnvFile()
-        return envVars[key] ?: (default ?: throw IllegalStateException("Environment variable for '$key' is not set. Please check your '.env' file."))
+        return envVars[key]
+            ?: default
+            ?: throw IllegalStateException("Environment variable for '$key' is not set. Please check your '.env' file.")
+    }
+
+    fun get(key: String): String {
+        return getOrDefault(key, null)
     }
 }
 
