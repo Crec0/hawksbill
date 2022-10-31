@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 
 object HawksBill {
     const val name = "HawksBill"
-    val log = LoggerFactory.getLogger(name) as Logger
+    val log: Logger = LoggerFactory.getLogger(name)
     val commands: Map<String, ICommand> = mutableMapOf()
 
     lateinit var database: MongoDatabase

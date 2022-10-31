@@ -1,6 +1,7 @@
 package dev.crec.hawksbill.events
 
 import dev.crec.hawksbill.api.HawksBill
+import dev.crec.hawksbill.api.util.child
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.CommandAutoCompleteInteractionEvent
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -10,10 +11,9 @@ import net.dv8tion.jda.api.events.interaction.component.GenericComponentInteract
 import net.dv8tion.jda.api.events.interaction.component.StringSelectInteractionEvent
 import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.hooks.SubscribeEvent
-import org.slf4j.LoggerFactory
 
 class EventListener {
-    private val log = LoggerFactory.getLogger("${HawksBill.name}|EventListener")
+    private val log = HawksBill.log.child("EventListener")
 
     @SubscribeEvent
     fun onReady(event: ReadyEvent) {

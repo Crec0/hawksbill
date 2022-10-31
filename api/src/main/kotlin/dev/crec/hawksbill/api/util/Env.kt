@@ -1,18 +1,21 @@
 package dev.crec.hawksbill.api.util
 
+import dev.crec.hawksbill.api.HawksBill
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
 
 object Env {
-    private val log: Logger = LoggerFactory.getLogger("HawksBill|Env")
+    // Cannot use child extension because of initialization errors.
+    private val log: Logger = LoggerFactory.getLogger("${HawksBill.name}|Env")
     private val envVars: MutableMap<String, String> = mutableMapOf()
 
     private fun readEnvFile() {
         if (envVars.isNotEmpty()) return
 
         File("../.env").bufferedReader().forEachLine { line ->
-            if (line.isBlank() || line.startsWith("#")) return@forEachLine
+            if (line.isBlank() || line.startsWith("#"))
+                return@forEachLine
 
             if (!line.contains("=")) {
                 log.warn("Invalid line in .env file: $line")

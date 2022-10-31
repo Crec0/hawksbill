@@ -4,16 +4,16 @@ import dev.crec.hawksbill.api.HawksBill
 import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
 import dev.crec.hawksbill.api.util.Env
+import dev.crec.hawksbill.api.util.child
 import dev.crec.hawksbill.events.EventListener
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.hooks.AnnotatedEventManager
 import org.litote.kmongo.KMongo
-import org.slf4j.LoggerFactory
 import kotlin.system.measureTimeMillis
 
-private val log = LoggerFactory.getLogger("${HawksBill.name}|Main")
+private val log = HawksBill.log.child("Main")
 
 private fun populateCommands(): Set<ICommand> {
     val commands = mutableSetOf<ICommand>()
