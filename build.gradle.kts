@@ -1,0 +1,59 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+plugins {
+    application
+
+    kotlin("jvm") version("1.7.20")
+    kotlin("plugin.serialization") version("1.7.20")
+
+    id("com.github.johnrengelman.shadow") version("7.1.1")
+}
+
+val projectName = "HawksBill"
+val botVersion = "1.0.0"
+
+application.mainClass.set("dev.crec.hawksbill.MainKt")
+
+repositories {
+    maven {
+        name = "Jitpack"
+        url = uri("https://jitpack.io")
+    }
+    gradlePluginPortal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation(libs.coroutines)
+    implementation(libs.stdlib)
+
+    implementation(libs.jda)
+    implementation(libs.jda.ktx)
+
+    implementation(libs.logback)
+
+    implementation(libs.kmongo)
+
+    implementation(libs.okhttp)
+    implementation(libs.classgraph)
+    implementation(libs.tomlkt)
+    implementation(libs.mathparser)
+}
+
+tasks.withType<KotlinCompile> {
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
+    }
+    exclude("**/modules/chatbridge")
+}
+
+tasks.withType<ShadowJar> {
+    archiveFileName.set("$projectName.jar")
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}

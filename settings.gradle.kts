@@ -9,9 +9,3 @@ dependencyResolutionManagement {
         }
     }
 }
-
-include("core")
-include("api")
-
-include(":modules:chatbridge")
-include(":modules:commands")

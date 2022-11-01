@@ -22,8 +22,8 @@ $ gradlew build
 
 ## Configuration
 
-- Rename sample.env to .env
-- Fill out the fields in the .env file
+- Rename sample.config.toml to config.toml
+- Fill out the fields in the config.toml file
 
 
 ## Using the bot

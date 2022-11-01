@@ -1,0 +1,36 @@
+# Discord bot token.
+# Get from https://discord.com/developers/applications
+# REQUIRED
+bot-token = "-------"
+# Tenor api key for gif search.
+# Get from https://developers.google.com/tenor/guides/quickstart#setup 
+# REQUIRED
+tenor-api-key = "-------"
+# MongoDB server url 
+# REQUIRED
+mongo-database-url = "mongodb+srv://.........."
+# MongoDB database name 
+# REQUIRED
+mongo-database-name = "HawksBill-Bot"
+# Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
+# OPTIONAL - Can be deleted
+is-dev = false
+
+# List of server's you want to connect to via rcon.
+# OPTIONAL - Can be deleted
+
+[[rcon-server]]
+# Name you want to assign to this server.
+# Example: Survival, SMP, Creative, etc.
+server-name = "adventure"
+# Server ip player's use to connect
+# Example: Survival, SMP, Creative, etc.
+server-port = "69.69.69.69"
+# Rcon port you set in server.properties
+# Example: 25575
+rcon-port = 25565
+# Rcon password you set in server.properties
+# Example: super-secret-password
+rcon-password = "super-secret"
+# Channel id which will become the chat bridge between discord and mc server.
+bridge-channel = "0198019801980912"
