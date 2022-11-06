@@ -338,13 +338,15 @@ class CommandPoll : ICommand {
         return buffer.toByteArray()
     }
 
+    private fun collection() = bot.database.getCollection<PollDTO>()
+
     private suspend fun createPollEntry(
         messageId: String,
         channelId: String,
         question: String,
         options: Map<String, String>
     ) {
-        bot.database.getCollection<PollDTO>().insertOne(
+        collection().insertOne(
             PollDTO(
                 vote_id = messageId,
                 channel_id = channelId,
@@ -355,26 +357,24 @@ class CommandPoll : ICommand {
     }
 
     private suspend fun fetchPoll(pollID: String): PollDTO? {
-        return bot.database.getCollection<PollDTO>().findOne(PollDTO::vote_id eq pollID)
+        return collection().findOne(PollDTO::vote_id eq pollID)
     }
 
     private suspend fun updatePollEntry(voteId: String, userId: String, selectedOption: String) {
-        bot.database.getCollection<PollDTO>()
-            .updateOne(
-                PollDTO::vote_id eq voteId,
-                set(PollDTO::votes.keyProjection(key = userId) setTo selectedOption)
-            )
+        collection().updateOne(
+            PollDTO::vote_id eq voteId,
+            set(PollDTO::votes.keyProjection(key = userId) setTo selectedOption)
+        )
     }
 
     private suspend fun removePollEntry(voteId: String, userId: String) {
-        bot.database.getCollection<PollDTO>()
-            .updateOne(
-                PollDTO::vote_id eq voteId,
-                unset(PollDTO::votes.keyProjection(key = userId))
-            )
+        collection().updateOne(
+            PollDTO::vote_id eq voteId,
+            unset(PollDTO::votes.keyProjection(key = userId))
+        )
     }
 
     private suspend fun deletePoll(voteId: String) {
-        bot.database.getCollection<PollDTO>().deleteOne(PollDTO::vote_id eq voteId)
+        collection().deleteOne(PollDTO::vote_id eq voteId)
     }
 }
