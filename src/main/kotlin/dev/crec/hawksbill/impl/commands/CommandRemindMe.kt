@@ -8,52 +8,21 @@ import dev.crec.hawksbill.utility.Colors
 import dev.crec.hawksbill.utility.extensions.SPACE_1EM
 import dev.crec.hawksbill.utility.extensions.hashString
 import dev.crec.hawksbill.utility.extensions.truncate
-import dev.minn.jda.ktx.generics.getChannel
 import dev.minn.jda.ktx.interactions.commands.Command
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
 import dev.minn.jda.ktx.messages.Embed
 import net.dv8tion.jda.api.entities.Message
 import net.dv8tion.jda.api.entities.User
-import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
-import org.litote.kmongo.`in`
 import java.lang.Integer.min
 import java.time.Instant
-import java.util.Timer
-import java.util.TimerTask
-import java.util.concurrent.TimeUnit
 import kotlin.time.Duration
 
 @SlashCommandMarker
 class CommandRemindMe : ICommand {
-
-    init {
-        Timer().schedule(
-            object : TimerTask() {
-                override fun run() {
-                    val collection = bot.db.getCollection<ReminderDTO>()
-                    val currentTime = Instant.now().toEpochMilli() / 1000L
-
-                    val expiredReminders = collection.find().filter { currentTime > it.expiry.toLong() }
-
-                    if (expiredReminders.isNotEmpty()) {
-                        expiredReminders.forEach { sendExpiredMessage(it) }
-
-                        collection.deleteMany(
-                            ReminderDTO::reminder_id `in` expiredReminders.map { it.reminder_id }
-                        )
-                    }
-                }
-            },
-            TimeUnit.SECONDS.toMillis(10),
-            TimeUnit.SECONDS.toMillis(10)
-        )
-    }
 
     override fun commandData(): SlashCommandData {
         return Command(
@@ -105,7 +74,7 @@ class CommandRemindMe : ICommand {
         }
     }
 
-    private fun handleAddReminder(event: SlashCommandInteractionEvent) {
+    private suspend fun handleAddReminder(event: SlashCommandInteractionEvent) {
         val timeArg = event.getOption("time")!!.asString
         val currentTime = Instant.now().toEpochMilli()
 
@@ -129,28 +98,30 @@ class CommandRemindMe : ICommand {
                 *If you need to cancel or get info for this reminder, use the id: `$hash`*
                 """.trimIndent()
             )
-            .queue {
-                bot.db.getCollection<ReminderDTO>().insertOne(
-                    ReminderDTO(
-                        reminder_id = hash,
-                        member_id = user.id,
-                        channel_id = event.channel.id,
-                        message = message,
-                        created = (currentTime / 1000).toString(),
-                        expiry = duration.toString(),
-                    )
-                )
-            }
+            .queue()
+
+        bot.database.getCollection<ReminderDTO>().insertOne(
+            ReminderDTO(
+                reminder_id = hash,
+                member_id = user.id,
+                channel_id = event.channel.id,
+                message = message,
+                created = currentTime / 1000,
+                expiry = duration,
+            )
+        )
+
+        bot.reminderService.requestUpdate()
     }
 
-    private fun handleCancelReminder(event: SlashCommandInteractionEvent) {
+    private suspend fun handleCancelReminder(event: SlashCommandInteractionEvent) {
         val reminderId = event.getOption("id")!!.asString
-        val reminder = bot.db.getCollection<ReminderDTO>().findOne(ReminderDTO::reminder_id eq reminderId)
+        val reminder = bot.database.getCollection<ReminderDTO>().findOne(ReminderDTO::reminder_id eq reminderId)
 
         val content = when (reminder?.member_id) {
             null -> "No reminder found with id: $reminderId"
             event.user.id -> {
-                bot.db.getCollection<ReminderDTO>().deleteOne(ReminderDTO::reminder_id eq reminderId)
+                bot.database.getCollection<ReminderDTO>().deleteOne(ReminderDTO::reminder_id eq reminderId)
 
                 "Successfully cancelled reminder for <@${reminder.member_id}> ${reminder.message.truncate(20)}"
             }
@@ -163,9 +134,9 @@ class CommandRemindMe : ICommand {
             .queue()
     }
 
-    private fun handleListReminders(event: SlashCommandInteractionEvent) {
+    private suspend fun handleListReminders(event: SlashCommandInteractionEvent) {
         val user = event.getOption("user")!!.asUser
-        val reminders = bot.db.getCollection<ReminderDTO>().find(ReminderDTO::member_id eq user.id).toList()
+        val reminders = bot.database.getCollection<ReminderDTO>().find(ReminderDTO::member_id eq user.id).toList()
 
         if (reminders.isEmpty()) {
             event.deferReply(true)
@@ -190,9 +161,9 @@ class CommandRemindMe : ICommand {
             .queue()
     }
 
-    private fun handleInfoReminder(event: SlashCommandInteractionEvent) {
+    private suspend fun handleInfoReminder(event: SlashCommandInteractionEvent) {
         val reminderId = event.getOption("id")!!.asString
-        val reminder = bot.db.getCollection<ReminderDTO>().findOne(ReminderDTO::reminder_id eq reminderId)
+        val reminder = bot.database.getCollection<ReminderDTO>().findOne(ReminderDTO::reminder_id eq reminderId)
 
         val (ephemeral, content) = when (reminder?.member_id) {
             null -> true to "No reminder found with id: $reminderId"
@@ -213,18 +184,5 @@ class CommandRemindMe : ICommand {
             .setContent(content)
             .setAllowedMentions(listOf(Message.MentionType.CHANNEL))
             .queue()
-    }
-
-    private fun sendExpiredMessage(reminder: ReminderDTO) {
-        val channel = bot.jda.getChannel<TextChannel>(reminder.channel_id)
-        val user = bot.jda.retrieveUserById(reminder.member_id).complete()
-
-        channel?.sendMessage(
-            """
-            Reminder for ${user.asMention}
-            > ${reminder.message}
-            *Created: <t:${reminder.created}:R>*
-            """.trimIndent()
-        )?.queue({}, { error -> bot.log.error("Error sending reminder message", error) })
     }
 }

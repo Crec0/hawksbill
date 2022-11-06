@@ -9,6 +9,7 @@ import dev.crec.hawksbill.utility.extensions.EMPTY
 import dev.crec.hawksbill.utility.extensions.image
 import dev.crec.hawksbill.utility.extensions.rect
 import dev.crec.hawksbill.utility.extensions.text
+import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.interactions.commands.Command
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
@@ -22,12 +23,10 @@ import net.dv8tion.jda.api.interactions.components.selections.SelectOption
 import net.dv8tion.jda.api.interactions.components.selections.StringSelectMenu
 import net.dv8tion.jda.api.utils.FileUpload
 import org.litote.kmongo.eq
-import org.litote.kmongo.findOne
-import org.litote.kmongo.getCollection
 import org.litote.kmongo.keyProjection
+import org.litote.kmongo.set
 import org.litote.kmongo.setTo
 import org.litote.kmongo.unset
-import org.litote.kmongo.updateOne
 import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 import kotlin.math.max
@@ -74,7 +73,7 @@ class CommandPoll : ICommand {
         }
     }
 
-    private fun handlePollCreate(event: SlashCommandInteractionEvent) {
+    private suspend fun handlePollCreate(event: SlashCommandInteractionEvent) {
         val allOptions = event.options.map { it.asString }.toList()
 
         val question = allOptions[0]
@@ -90,7 +89,7 @@ class CommandPoll : ICommand {
         val distinctOptions = allOptions.subList(1, allOptions.size).distinct()
         val options = getSelectOptions(distinctOptions)
 
-        event
+        val message = event
             .deferReply()
             .flatMap { it.editOriginal(EMPTY) }
             .flatMap { message ->
@@ -112,15 +111,14 @@ class CommandPoll : ICommand {
                         Button.primary(voteButtonId, PollButtons.VOTE.value),
                         Button.danger(retractVoteId, PollButtons.RETRACT.value)
                     )
-            }
-            .queue { message ->
-                createPollEntry(
-                    messageId = message.id,
-                    channelId = message.channel.id,
-                    question = question,
-                    options = options
-                )
-            }
+            }.await()
+
+        createPollEntry(
+            messageId = message.id,
+            channelId = message.channel.id,
+            question = question,
+            options = options
+        )
     }
 
     override suspend fun onButton(event: ButtonInteractionEvent, ids: List<String>) {
@@ -137,7 +135,7 @@ class CommandPoll : ICommand {
         event.deferEdit().setContent("Your vote has been recorded").setComponents().queue()
     }
 
-    private fun handleVote(event: ButtonInteractionEvent, pollID: String) {
+    private suspend fun handleVote(event: ButtonInteractionEvent, pollID: String) {
         val deferredReply = event.deferReply(true)
         val poll = fetchPoll(pollID)
 
@@ -158,7 +156,7 @@ class CommandPoll : ICommand {
             .queue()
     }
 
-    private fun handleRetract(event: ButtonInteractionEvent, pollID: String) {
+    private suspend fun handleRetract(event: ButtonInteractionEvent, pollID: String) {
         event.deferReply(true).setContent("Vote removed").queue()
         removePollEntry(pollID, event.user.id)
     }
@@ -184,7 +182,7 @@ class CommandPoll : ICommand {
             }
     }
 
-    private fun handlePollEnd(event: SlashCommandInteractionEvent) {
+    private suspend fun handlePollEnd(event: SlashCommandInteractionEvent) {
         val id = event.getOption("poll-id")!!.asString
         val poll = fetchPoll(id)
 
@@ -340,8 +338,13 @@ class CommandPoll : ICommand {
         return buffer.toByteArray()
     }
 
-    private fun createPollEntry(messageId: String, channelId: String, question: String, options: Map<String, String>) {
-        bot.db.getCollection<PollDTO>().insertOne(
+    private suspend fun createPollEntry(
+        messageId: String,
+        channelId: String,
+        question: String,
+        options: Map<String, String>
+    ) {
+        bot.database.getCollection<PollDTO>().insertOne(
             PollDTO(
                 vote_id = messageId,
                 channel_id = channelId,
@@ -351,27 +354,27 @@ class CommandPoll : ICommand {
         )
     }
 
-    private fun fetchPoll(pollID: String): PollDTO? {
-        return bot.db.getCollection<PollDTO>().findOne(PollDTO::vote_id eq pollID)
+    private suspend fun fetchPoll(pollID: String): PollDTO? {
+        return bot.database.getCollection<PollDTO>().findOne(PollDTO::vote_id eq pollID)
     }
 
-    private fun updatePollEntry(voteId: String, userId: String, selectedOption: String) {
-        bot.db.getCollection<PollDTO>()
+    private suspend fun updatePollEntry(voteId: String, userId: String, selectedOption: String) {
+        bot.database.getCollection<PollDTO>()
             .updateOne(
                 PollDTO::vote_id eq voteId,
-                PollDTO::votes.keyProjection(key = userId) setTo selectedOption
+                set(PollDTO::votes.keyProjection(key = userId) setTo selectedOption)
             )
     }
 
-    private fun removePollEntry(voteId: String, userId: String) {
-        bot.db.getCollection<PollDTO>()
+    private suspend fun removePollEntry(voteId: String, userId: String) {
+        bot.database.getCollection<PollDTO>()
             .updateOne(
                 PollDTO::vote_id eq voteId,
-                unset(PollDTO::votes.keyProjection(userId))
+                unset(PollDTO::votes.keyProjection(key = userId))
             )
     }
 
-    private fun deletePoll(voteId: String) {
-        bot.db.getCollection<PollDTO>().deleteOne(PollDTO::vote_id eq voteId)
+    private suspend fun deletePoll(voteId: String) {
+        bot.database.getCollection<PollDTO>().deleteOne(PollDTO::vote_id eq voteId)
     }
 }
