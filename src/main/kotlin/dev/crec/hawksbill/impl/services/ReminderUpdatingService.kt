@@ -22,12 +22,11 @@ class ReminderUpdatingService {
 
     private val requiresUpdate = AtomicBoolean(false)
 
-    private val collection
-        get() = bot.database.getCollection<ReminderDTO>()
-
     fun requestUpdate() {
         this.requiresUpdate.set(true)
     }
+
+    private fun collection() = bot.database.getCollection<ReminderDTO>()
 
     private suspend fun updateCache() {
         if (coolDown.inWholeSeconds == 0L || requiresUpdate.get()) {
@@ -35,7 +34,7 @@ class ReminderUpdatingService {
 
             coolDown = 60.seconds
 
-            collection
+            collection()
                 .find(ReminderDTO::expiry lt (Instant.now().epochSecond + 5.minutes.inWholeSeconds))
                 .toList()
                 .forEach {
@@ -69,7 +68,7 @@ class ReminderUpdatingService {
             }
 
             if (remindersToDelete.isNotEmpty()) {
-                collection.deleteMany(ReminderDTO::reminder_id `in` remindersToDelete)
+                collection().deleteMany(ReminderDTO::reminder_id `in` remindersToDelete)
             }
         }
     }
