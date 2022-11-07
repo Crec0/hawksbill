@@ -44,14 +44,14 @@ data class BotConfig(
     )
     val databaseName: String,
 
-    @SerialName("is-dev")
+    @SerialName("debug")
     @TomlComment(
         """
         Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
         OPTIONAL - Can be deleted
         """
     )
-    val isDev: Boolean = false,
+    val isDebugEnabled: Boolean = false,
 
     @SerialName("rcon-server")
     @TomlComment(

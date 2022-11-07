@@ -14,7 +14,7 @@ mongo-database-url = "mongodb+srv://.........."
 mongo-database-name = "HawksBill-Bot"
 # Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
 # OPTIONAL - Can be deleted
-is-dev = false
+debug = false
 
 # List of server's you want to connect to via rcon.
 # OPTIONAL - Can be deleted
