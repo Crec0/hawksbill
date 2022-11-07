@@ -19,13 +19,12 @@ data class ReminderDTO(
     val expiry: Long,
 ) : Entity, Delayed {
 
-    val formattedMessage
-        get() =
-            """
-            Reminder for ${User.fromId(this.member_id).asMention}
-            > ${this.message}
-            *Created: <t:${this.created}:R>*
-            """.trimIndent()
+    val formattedMessage =
+        """
+        Reminder for ${User.fromId(this.member_id).asMention}
+        > ${this.message}
+        *Created: <t:${this.created}:R>*
+        """.trimIndent()
 
     override fun getDelay(unit: TimeUnit): Long {
         return unit.convert(Duration.of(this.expiry - Instant.now().epochSecond, ChronoUnit.SECONDS))
