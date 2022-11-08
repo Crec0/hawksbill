@@ -1,4 +1,4 @@
-package dev.crec.hawksbill.jda
+package dev.crec.hawksbill.impl.jda
 
 import dev.crec.hawksbill.bot
 import dev.crec.hawksbill.mainLogger
