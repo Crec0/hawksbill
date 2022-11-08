@@ -6,6 +6,7 @@ import dev.crec.hawksbill.config.ConfigIO
 import dev.crec.hawksbill.impl.jda.EventListener
 import dev.crec.hawksbill.impl.services.ReminderUpdatingService
 import dev.crec.hawksbill.utility.extensions.child
+import dev.crec.hawksbill.utility.requests.TenorAPI
 import dev.minn.jda.ktx.events.CoroutineEventManager
 import io.github.classgraph.ClassGraph
 import io.github.classgraph.ScanResult
@@ -35,6 +36,8 @@ class HawksBill {
     val httpClient = OkHttpClient.Builder().connectionPool(ConnectionPool(10, 20, TimeUnit.SECONDS)).build()
 
     val reminderService = ReminderUpdatingService()
+
+    val tenorAPI = TenorAPI(config)
 
     val commands = scanCommands()
     val jda = initJDA()
