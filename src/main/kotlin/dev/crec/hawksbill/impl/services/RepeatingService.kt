@@ -1,19 +1,19 @@
-package dev.crec.hawksbill.api.services
+package dev.crec.hawksbill.impl.services
 
-import kotlinx.coroutines.CoroutineScope
+import dev.crec.hawksbill.api.services.Service
+import dev.crec.hawksbill.bot
+import dev.minn.jda.ktx.jdabuilder.scope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 
-class RepeatingService(
+sealed class RepeatingService(
     private val startDelay: Duration,
     private val delay: Duration,
-    private val scope: CoroutineScope,
-    private val task: suspend CoroutineScope.() -> Unit
 ) : Service {
 
-    override suspend fun start() {
-        scope.launch {
+    override suspend fun runTask(task: suspend () -> Unit) {
+        bot.jda.scope.launch {
             delay(startDelay)
             while (true) {
                 task()

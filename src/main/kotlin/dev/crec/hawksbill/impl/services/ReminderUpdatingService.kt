@@ -1,12 +1,10 @@
 package dev.crec.hawksbill.impl.services
 
-import dev.crec.hawksbill.api.services.RepeatingService
 import dev.crec.hawksbill.bot
 import dev.crec.hawksbill.impl.database.ReminderDTO
 import dev.crec.hawksbill.utility.extensions.asExpiredValuesFlow
 import dev.minn.jda.ktx.coroutines.await
 import dev.minn.jda.ktx.generics.getChannel
-import kotlinx.coroutines.CoroutineScope
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel
 import org.litote.kmongo.`in`
 import org.litote.kmongo.lt
@@ -16,7 +14,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-class ReminderUpdatingService {
+class ReminderUpdatingService : RepeatingService(5.seconds, 1.seconds) {
+
     private var cache: DelayQueue<ReminderDTO> = DelayQueue()
     private var coolDown = 0.seconds
 
@@ -30,8 +29,8 @@ class ReminderUpdatingService {
 
     private suspend fun updateCache() {
         if (coolDown.inWholeSeconds == 0L || requiresUpdate.get()) {
-            requiresUpdate.set(false)
 
+            requiresUpdate.set(false)
             coolDown = 60.seconds
 
             collection()
@@ -47,8 +46,8 @@ class ReminderUpdatingService {
         }
     }
 
-    private suspend fun servicePartial(scope: CoroutineScope): RepeatingService {
-        return RepeatingService(5.seconds, 1.seconds, scope) {
+    suspend fun start() {
+        super.runTask {
             updateCache()
             val remindersToDelete = mutableListOf<String>()
 
@@ -71,9 +70,5 @@ class ReminderUpdatingService {
                 collection().deleteMany(ReminderDTO::reminder_id `in` remindersToDelete)
             }
         }
-    }
-
-    suspend fun start(scope: CoroutineScope) {
-        servicePartial(scope).start()
     }
 }

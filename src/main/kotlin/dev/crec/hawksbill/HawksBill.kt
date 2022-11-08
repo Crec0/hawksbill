@@ -2,9 +2,9 @@ package dev.crec.hawksbill
 
 import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
-import dev.crec.hawksbill.api.config.ConfigIO
+import dev.crec.hawksbill.config.ConfigIO
+import dev.crec.hawksbill.impl.jda.EventListener
 import dev.crec.hawksbill.impl.services.ReminderUpdatingService
-import dev.crec.hawksbill.jda.EventListener
 import dev.crec.hawksbill.utility.extensions.child
 import dev.minn.jda.ktx.events.CoroutineEventManager
 import io.github.classgraph.ClassGraph
@@ -72,7 +72,7 @@ class HawksBill {
     }
 
     private fun initJDA(): JDA {
-        val supervisorJob= SupervisorJob()
+        val supervisorJob = SupervisorJob()
         val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
             if (throwable !is CancellationException)
                 log.error("Uncaught exception in coroutine", throwable)
@@ -86,14 +86,14 @@ class HawksBill {
 
         manager.listener<ReadyEvent> {
             updateCommands()
+
+            manager.launch {
+                reminderService.start()
+            }
         }
 
         manager.listener<ShutdownEvent> {
             supervisorJob.cancel()
-        }
-
-        scope.launch {
-            reminderService.start(this)
         }
 
         return JDABuilder.createDefault(config.token)
