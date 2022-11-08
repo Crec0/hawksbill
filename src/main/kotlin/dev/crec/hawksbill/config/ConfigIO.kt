@@ -1,4 +1,4 @@
-package dev.crec.hawksbill.api.config
+package dev.crec.hawksbill.config
 
 import dev.crec.hawksbill.utility.extensions.toPath
 import kotlinx.serialization.decodeFromString

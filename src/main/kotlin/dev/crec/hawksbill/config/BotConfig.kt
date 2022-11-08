@@ -1,4 +1,4 @@
-package dev.crec.hawksbill.api.config
+package dev.crec.hawksbill.config
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
