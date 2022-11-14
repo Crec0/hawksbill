@@ -14,10 +14,6 @@ import kotlin.coroutines.suspendCoroutine
 suspend fun Request.awaitResponse() = suspendCoroutine { continuation ->
     bot.httpClient.newCall(this@awaitResponse).enqueue(object : Callback {
 
-        override fun onFailure(call: Call, e: IOException) {
-            continuation.resumeWithException(e)
-        }
-
         override fun onResponse(call: Call, response: Response) {
             val body = response.body
             if (body == null) {
@@ -27,6 +23,10 @@ suspend fun Request.awaitResponse() = suspendCoroutine { continuation ->
             } else {
                 continuation.resume(DataObject.fromJson(body.bytes()))
             }
+        }
+
+        override fun onFailure(call: Call, e: IOException) {
+            continuation.resumeWithException(e)
         }
     })
 }
