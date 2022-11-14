@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 fun <T : Delayed> DelayQueue<T>.asExpiredValuesFlow() = flow {
     while (true) {
-        val polledValue = this@asExpiredValuesFlow.poll(5, TimeUnit.MILLISECONDS) ?: break
+        val polledValue = this@asExpiredValuesFlow.poll(50, TimeUnit.MILLISECONDS) ?: break
         emit(polledValue)
     }
 }.flowOn(Dispatchers.IO)
