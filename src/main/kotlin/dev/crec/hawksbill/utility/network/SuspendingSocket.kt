@@ -4,10 +4,14 @@ import java.net.SocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousSocketChannel
 import java.nio.channels.CompletionHandler
+import java.nio.channels.InterruptedByTimeoutException
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 
 class SuspendingSocket(
@@ -21,21 +25,25 @@ class SuspendingSocket(
         }
     }
 
-    suspend fun read(buffer: ByteBuffer) {
+    suspend fun read(buffer: ByteBuffer, timeout: Duration) {
         suspendCoroutine { continuation ->
             socketChannel.read(
-                buffer, continuation, SocketCompletionHandler<Int>()
+                buffer, timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS, continuation, SocketCompletionHandler<Int>()
             )
         }
     }
 
-    suspend fun write(buffer: ByteBuffer) {
+    suspend fun read(buffer: ByteBuffer) = read(buffer, 50.milliseconds)
+
+    suspend fun write(buffer: ByteBuffer, timeout: Duration) {
         suspendCoroutine { continuation ->
             socketChannel.write(
-                buffer, continuation, SocketCompletionHandler<Int>()
+                buffer, timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS, continuation, SocketCompletionHandler<Int>()
             )
         }
     }
+
+    suspend fun write(buffer: ByteBuffer) = write(buffer, 50.milliseconds)
 
     suspend fun close() {
         suspendCoroutine<Unit> {
