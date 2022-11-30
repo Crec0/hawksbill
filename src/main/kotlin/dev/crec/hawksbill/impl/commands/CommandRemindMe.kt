@@ -66,11 +66,11 @@ class CommandRemindMe : ICommand {
     }
 
     override suspend fun onSlashCommand(event: SlashCommandInteractionEvent) {
-        when (event.commandPath) {
-            "${this.name}/add" -> handleAddReminder(event)
-            "${this.name}/cancel" -> handleCancelReminder(event)
-            "${this.name}/list" -> handleListReminders(event)
-            "${this.name}/info" -> handleInfoReminder(event)
+        when (event.subcommandName) {
+            "add" -> handleAddReminder(event)
+            "cancel" -> handleCancelReminder(event)
+            "list" -> handleListReminders(event)
+            "info" -> handleInfoReminder(event)
         }
     }
 

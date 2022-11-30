@@ -66,10 +66,10 @@ class CommandPoll : ICommand {
     }
 
     override suspend fun onSlashCommand(event: SlashCommandInteractionEvent) {
-        when (event.commandPath) {
-            "${this.name}/create" -> handlePollCreate(event)
-            "${this.name}/end" -> handlePollEnd(event)
-//            "${this.name}/test" -> handlePollTest(event)
+        when (event.subcommandName) {
+            "create" -> handlePollCreate(event)
+            "end" -> handlePollEnd(event)
+//            "test" -> handlePollTest(event)
         }
     }
 

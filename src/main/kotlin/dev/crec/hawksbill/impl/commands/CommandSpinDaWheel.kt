@@ -27,10 +27,10 @@ class CommandSpinDaWheel : ICommand {
     }
 
     override suspend fun onSlashCommand(event: SlashCommandInteractionEvent) {
-        when (event.commandPath) {
-            "$name/coin" -> handleCoinFlip(event)
-            "$name/die" -> handleDieRoll(event)
-            "$name/spin" -> handleSpinWheel(event)
+        when (event.subcommandName) {
+            "coin" -> handleCoinFlip(event)
+            "die" -> handleDieRoll(event)
+            "spin" -> handleSpinWheel(event)
         }
     }
 

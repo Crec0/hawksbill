@@ -1,6 +1,6 @@
 [versions]
-jda        = "5.0.0-alpha.22"
-jda-ktx    = "863470ecee02a0699418964106742c815a0991d2"
+jda        = "5.0.0-beta.1"
+jda-ktx    = "17eb77a138ba356a3b0439afeddf77d4520c7c60"
 logback    = "1.4.4"
 kmongo     = "4.7.2"
 coroutines = "1.6.4"
