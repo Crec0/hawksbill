@@ -5,9 +5,10 @@ import org.slf4j.LoggerFactory
 
 val mainLogger: Logger = LoggerFactory.getLogger("HawksBill")
 
-lateinit var bot: HawksBill
-    private set
+val bot by lazy {
+    HawksBill()
+}
 
 fun main() {
-    bot = HawksBill()
+    bot.init()
 }

@@ -14,6 +14,7 @@ import dev.minn.jda.ktx.interactions.commands.Command
 import dev.minn.jda.ktx.interactions.commands.option
 import dev.minn.jda.ktx.interactions.commands.subcommand
 import dev.minn.jda.ktx.messages.Embed
+import dev.minn.jda.ktx.messages.reply_
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
@@ -62,14 +63,16 @@ class CommandPoll : ICommand {
             )
         }
 
-//            subcommand("test", "testing")
+        if (bot.config.isDeveloperMode) {
+            subcommand("test", "testing")
+        }
     }
 
     override suspend fun onSlashCommand(event: SlashCommandInteractionEvent) {
         when (event.subcommandName) {
             "create" -> handlePollCreate(event)
             "end" -> handlePollEnd(event)
-//            "test" -> handlePollTest(event)
+            "test" -> handlePollTest(event)
         }
     }
 
@@ -213,18 +216,26 @@ class CommandPoll : ICommand {
         event.deferReply(true).setContent("Poll $id successfully ended").queue()
     }
 
-//    private fun handlePollTest(event: SlashCommandInteractionEvent) {
-//        val poll =
-//            Poll("1", "954894993871482950", "w", getSelectOptions(listOf()), mapOf("1" to "Upvote", "4" to "Upvote", "2" to "Downvote"))
-//
-//        event.reply_(
-//            embed = Embed {
-//                color = 0x06B6D4
-//                image = "attachment://$IMAGE_NAME"
-//            },
-//            file = NamedFile(IMAGE_NAME, createPollResultsImage(poll).inputStream())
-//        ).queue()
-//    }
+    private fun handlePollTest(event: SlashCommandInteractionEvent) {
+        val poll =
+            PollDTO(
+                "1",
+                "954894993871482950",
+                "w",
+                getSelectOptions(listOf()),
+                mapOf("1" to "Upvote", "4" to "Upvote", "2" to "Downvote")
+            )
+
+        event.reply_(
+            embeds = listOf(
+                Embed {
+                    color = 0x06B6D4
+                    image = "attachment://$pollImageName"
+                }
+            ),
+            files = listOf(FileUpload.fromData(createPollResultsImage(poll).inputStream(), pollImageName))
+        ).queue()
+    }
 
     enum class PollButtons(val value: String) {
         VOTE("Vote"),

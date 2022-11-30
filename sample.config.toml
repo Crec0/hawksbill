@@ -8,33 +8,44 @@ bot-token = "-------"
 tenor-api-key = "-------"
 # MongoDB server url 
 # REQUIRED
-mongo-database-url = "mongodb+srv://.........."
+mongo-database-url = "mongodb+srv://-------"
 # MongoDB database name 
 # REQUIRED
 mongo-database-name = "HawksBill-Bot"
 
-# Port the bot will listen to for servers connecting
-# REQUIRED
-rcon-port = 25560
 # Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
 # OPTIONAL - Can be deleted
 debug = false
 
+# Port the bot will listen to for servers connecting for chat bridge
+# DEFAULT: 25564
+# REQUIRED
+bridge-server-port = 25564
+
 # List of minecraft server's you want to connect to via rcon.
 # OPTIONAL - Can be deleted
 
-[[rcon-client]]
+[[minecraft-server]]
 # Name you want to assign to this server.
 # Example: Survival, SMP, Creative, etc.
 server-name = "adventure"
 # Server ip player's use to connect
-# Example: Survival, SMP, Creative, etc.
-server-port = "69.69.69.69"
-# Rcon port you set in server.properties
+# Example: 127.0.0.1, 86.20.123.10
+server-ip = "69.69.69.69"
+
+# Server port use to connect if not default (25565)
+# Example: 25565
+server-port = 25565
+
+# Rcon port of the server if not default (25575)
 # Example: 25575
-rcon-port = 25565
+rcon-port = 25575
 # Rcon password you set in server.properties
 # Example: super-secret-password
 rcon-password = "super-secret"
+
+# Port the server will use for chat bridge.
+# Default: 25576
+bridge-port = 25576
 # Channel id which will become the chat bridge between discord and mc server.
-bridge-channel = "0198019801980912"
+bridge-channel-id = "0198019801980912"

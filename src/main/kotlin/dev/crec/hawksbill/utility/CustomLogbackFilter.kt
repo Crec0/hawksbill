@@ -11,7 +11,7 @@ class CustomLogbackFilter : Filter<ILoggingEvent>() {
     override fun decide(event: ILoggingEvent): FilterReply {
         return if (
             event.loggerName.startsWith("org.mongodb.driver.") ||
-            (event.level.toInt() == Level.DEBUG.toInt() && !bot.config.isDebugEnabled)
+            (event.level.toInt() == Level.DEBUG.toInt() && !bot.config.isDeveloperMode)
         ) {
             FilterReply.DENY
         } else {

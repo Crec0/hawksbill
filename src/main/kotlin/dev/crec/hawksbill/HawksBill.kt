@@ -8,6 +8,7 @@ import dev.crec.hawksbill.impl.services.ReminderUpdatingService
 import dev.crec.hawksbill.utility.extensions.child
 import dev.crec.hawksbill.utility.requests.TenorAPI
 import dev.minn.jda.ktx.events.CoroutineEventManager
+import dev.minn.jda.ktx.jdabuilder.scope
 import io.github.classgraph.ClassGraph
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -20,7 +21,6 @@ import net.dv8tion.jda.api.events.session.ReadyEvent
 import net.dv8tion.jda.api.events.session.ShutdownEvent
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
-import org.litote.kmongo.coroutine.CoroutineDatabase
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 import java.util.concurrent.CancellationException
@@ -28,17 +28,29 @@ import java.util.concurrent.TimeUnit
 import kotlin.time.Duration.Companion.seconds
 
 class HawksBill {
-    val config = ConfigIO.read()
-    val log = mainLogger.child("Bot")
-    val database: CoroutineDatabase = KMongo.createClient(config.databaseURL).getDatabase(config.databaseName).coroutine
+    val log        = mainLogger.child("Bot")
+    val config     = ConfigIO.read()
+    val database   = KMongo.createClient(config.databaseURL).getDatabase(config.databaseName).coroutine
     val httpClient = OkHttpClient.Builder().connectionPool(ConnectionPool(10, 20, TimeUnit.SECONDS)).build()
 
     val reminderService = ReminderUpdatingService()
 
     val tenorAPI = TenorAPI(config)
 
-    val commands = scanCommands()
-    val jda = initJDA()
+    lateinit var commands: Map<String, ICommand>
+        private set
+
+    lateinit var jda: JDA
+        private set
+
+    fun init() {
+        commands = scanCommands()
+        jda = initJDA()
+
+        jda.scope.launch {
+            reminderService.start()
+        }
+    }
 
     private fun scanCommands(): Map<String, ICommand> {
         val classGraph = ClassGraph()
@@ -81,10 +93,6 @@ class HawksBill {
 
         manager.listener<ReadyEvent> {
             updateCommands()
-
-            manager.launch {
-                reminderService.start()
-            }
         }
 
         manager.listener<ShutdownEvent> {

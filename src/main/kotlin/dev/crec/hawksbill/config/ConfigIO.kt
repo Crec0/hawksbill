@@ -9,35 +9,34 @@ import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 object ConfigIO {
-    private val defaultConfig = BotConfig(
+    private val sampleConfig = BotConfig(
         token = "-------",
         tenorApiKey = "-------",
-        databaseURL = "mongodb+srv://..........",
+        databaseURL = "mongodb+srv://-------",
         databaseName = "HawksBill-Bot",
-        rconClients = listOf(
-            RconClient(
+        minecraftServers = listOf(
+            MinecraftServer(
                 name = "adventure",
-                ip = "69.69.69.69",
-                port = 25565,
-                password = "super-secret",
-                channelId = "0198019801980912"
+                rconPassword = "super-secret",
+                bridgeChannelId = "0198019801980912"
             )
         )
     )
 
     private val configPath = "./config.toml".toPath()
+    private val sampleConfigPath = "./sample.config.toml".toPath()
 
     fun read(): BotConfig {
         if (configPath.notExists()) {
             writeDefault()
             throw IllegalStateException(
-                "Config file doesn't exist at the location. Created ${configPath.name} with default config."
+                "Config file doesn't exist at the location. Created ${sampleConfigPath.name} with default config."
             )
         }
         return Toml.decodeFromString(configPath.readText())
     }
 
     private fun writeDefault() {
-        configPath.writeText(Toml.encodeToString(BotConfig.serializer(), defaultConfig))
+        sampleConfigPath.writeText(Toml.encodeToString(BotConfig.serializer(), sampleConfig))
     }
 }

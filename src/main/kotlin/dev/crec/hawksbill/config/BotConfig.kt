@@ -44,36 +44,37 @@ data class BotConfig(
     )
     val databaseName: String,
 
-    @SerialName("rcon-port")
-    @TomlComment(
-        """
-        Port the bot will listen to for servers connecting
-        REQUIRED
-        """
-    )
-    val rconPort: UShort = 25560.toUShort(),
-
     @SerialName("debug")
     @TomlComment(
         """
-            Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
+            Setting it to true will enable debug level of logging and some development commands.
             OPTIONAL - Can be deleted
             """
     )
-    val isDebugEnabled: Boolean = false,
+    val isDeveloperMode: Boolean = false,
 
-    @SerialName("rcon-client")
+    @SerialName("bridge-server-port")
+    @TomlComment(
+        """
+        Port the bot will listen to for servers connecting for chat bridge
+        DEFAULT: 25564
+        REQUIRED
+        """
+    )
+    val bridgePort: UShort = 25564.toUShort(),
+
+    @SerialName("minecraft-server")
     @TomlComment(
         """
         List of minecraft server's you want to connect to via rcon.
         OPTIONAL - Can be deleted
         """
     )
-    val rconClients: List<RconClient> = listOf()
+    val minecraftServers: List<MinecraftServer> = listOf()
 )
 
 @Serializable
-data class RconClient(
+data class MinecraftServer(
     @SerialName("server-name")
     @TomlComment(
         """
@@ -83,23 +84,32 @@ data class RconClient(
     )
     val name: String,
 
-    @SerialName("server-port")
+    @SerialName("server-ip")
     @TomlComment(
         """
         Server ip player's use to connect
-        Example: Survival, SMP, Creative, etc.
+        Example: 127.0.0.1, 86.20.123.10
         """
     )
-    val ip: String,
+    val serverIp: String = "127.0.0.1",
+
+    @SerialName("server-port")
+    @TomlComment(
+        """
+        Server port use to connect if not default (25565)
+        Example: 25565
+        """
+    )
+    val serverPort: UShort = 25565.toUShort(),
 
     @SerialName("rcon-port")
     @TomlComment(
         """
-        Rcon port you set in server.properties
+        Rcon port of the server if not default (25575)
         Example: 25575
         """
     )
-    val port: Int,
+    val rconPort: UShort = 25575.toUShort(),
 
     @SerialName("rcon-password")
     @TomlComment(
@@ -108,13 +118,22 @@ data class RconClient(
         Example: super-secret-password
         """
     )
-    val password: String,
+    val rconPassword: String,
 
-    @SerialName("bridge-channel")
+    @SerialName("bridge-port")
+    @TomlComment(
+        """
+        Port the server will use for chat bridge.
+        Default: 25576
+        """
+    )
+    val bridgePort: UShort = 25576.toUShort(),
+
+    @SerialName("bridge-channel-id")
     @TomlComment(
         """
         Channel id which will become the chat bridge between discord and mc server.
         """
     )
-    val channelId: String
+    val bridgeChannelId: String
 )
