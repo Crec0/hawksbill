@@ -9,7 +9,6 @@ import dev.crec.hawksbill.utility.extensions.child
 import dev.crec.hawksbill.utility.requests.TenorAPI
 import dev.minn.jda.ktx.events.CoroutineEventManager
 import io.github.classgraph.ClassGraph
-import io.github.classgraph.ScanResult
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -26,7 +25,6 @@ import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
-import kotlin.system.measureTimeMillis
 import kotlin.time.Duration.Companion.seconds
 
 class HawksBill {
@@ -48,15 +46,9 @@ class HawksBill {
             .enableAnnotationInfo()
             .acceptPackages("dev.crec.hawksbill.impl.commands")
 
-        val scanResult: ScanResult
-        val timeTaken = measureTimeMillis {
-            scanResult = classGraph.scan()
-        }
-
         val classes = mutableListOf<ICommand>()
 
-        scanResult.use { result ->
-            log.info("Scanned ${result.allClasses.size} classes in $timeTaken ms")
+        classGraph.scan().use { result ->
             result.getClassesWithAnnotation(SlashCommandMarker::class.java).forEach { classInfo ->
                 val cmdInstance = classInfo.loadClass().getConstructor().newInstance() as ICommand
                 classes.add(cmdInstance)

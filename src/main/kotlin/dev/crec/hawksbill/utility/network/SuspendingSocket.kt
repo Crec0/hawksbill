@@ -4,7 +4,6 @@ import java.net.SocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousSocketChannel
 import java.nio.channels.CompletionHandler
-import java.nio.channels.InterruptedByTimeoutException
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
@@ -51,8 +50,7 @@ class SuspendingSocket(
         }
     }
 
-    private class SocketCompletionHandler<T>
-        : CompletionHandler<T, Continuation<T>> {
+    private class SocketCompletionHandler<T> : CompletionHandler<T, Continuation<T>> {
 
         override fun completed(result: T, attachment: Continuation<T>) {
             attachment.resume(result)
