@@ -44,27 +44,36 @@ data class BotConfig(
     )
     val databaseName: String,
 
+    @SerialName("rcon-port")
+    @TomlComment(
+        """
+        Port the bot will listen to for servers connecting
+        REQUIRED
+        """
+    )
+    val rconPort: UShort = 25560.toUShort(),
+
     @SerialName("debug")
     @TomlComment(
         """
-        Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
-        OPTIONAL - Can be deleted
-        """
+            Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
+            OPTIONAL - Can be deleted
+            """
     )
     val isDebugEnabled: Boolean = false,
 
-    @SerialName("rcon-server")
+    @SerialName("rcon-client")
     @TomlComment(
         """
-        List of server's you want to connect to via rcon.
+        List of minecraft server's you want to connect to via rcon.
         OPTIONAL - Can be deleted
         """
     )
-    val rconServers: List<RconServer> = listOf()
+    val rconClients: List<RconClient> = listOf()
 )
 
 @Serializable
-data class RconServer(
+data class RconClient(
     @SerialName("server-name")
     @TomlComment(
         """

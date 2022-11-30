@@ -14,9 +14,8 @@ object ConfigIO {
         tenorApiKey = "-------",
         databaseURL = "mongodb+srv://..........",
         databaseName = "HawksBill-Bot",
-        isDebugEnabled = false,
-        rconServers = listOf(
-            RconServer(
+        rconClients = listOf(
+            RconClient(
                 name = "adventure",
                 ip = "69.69.69.69",
                 port = 25565,

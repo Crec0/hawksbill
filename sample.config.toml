@@ -12,14 +12,18 @@ mongo-database-url = "mongodb+srv://.........."
 # MongoDB database name 
 # REQUIRED
 mongo-database-name = "HawksBill-Bot"
+
+# Port the bot will listen to for servers connecting
+# REQUIRED
+rcon-port = 25560
 # Setting it to true will enable debug level of logging, which may be overwhelming for regular use.
 # OPTIONAL - Can be deleted
 debug = false
 
-# List of server's you want to connect to via rcon.
+# List of minecraft server's you want to connect to via rcon.
 # OPTIONAL - Can be deleted
 
-[[rcon-server]]
+[[rcon-client]]
 # Name you want to assign to this server.
 # Example: Survival, SMP, Creative, etc.
 server-name = "adventure"
