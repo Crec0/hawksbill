@@ -9,9 +9,9 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-class SuspendingServerSocket(
-    private val socketChannel: AsynchronousServerSocketChannel = AsynchronousServerSocketChannel.open()
-) {
+class SuspendingServerSocket {
+    private val socketChannel = AsynchronousServerSocketChannel.open()
+
     suspend fun bind(address: SocketAddress) {
         suspendCoroutine<Unit> {
             socketChannel.bind(address)

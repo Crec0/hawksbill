@@ -24,8 +24,8 @@ class SuspendingSocket(
         }
     }
 
-    suspend fun read(buffer: ByteBuffer, timeout: Duration) {
-        suspendCoroutine { continuation ->
+    suspend fun read(buffer: ByteBuffer, timeout: Duration): Int {
+        return suspendCoroutine { continuation ->
             socketChannel.read(
                 buffer, timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS, continuation, SocketCompletionHandler<Int>()
             )
@@ -34,8 +34,8 @@ class SuspendingSocket(
 
     suspend fun read(buffer: ByteBuffer) = read(buffer, 50.milliseconds)
 
-    suspend fun write(buffer: ByteBuffer, timeout: Duration) {
-        suspendCoroutine { continuation ->
+    suspend fun write(buffer: ByteBuffer, timeout: Duration): Int {
+        return suspendCoroutine { continuation ->
             socketChannel.write(
                 buffer, timeout.inWholeMilliseconds, TimeUnit.MILLISECONDS, continuation, SocketCompletionHandler<Int>()
             )
