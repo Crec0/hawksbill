@@ -46,6 +46,7 @@ tasks.withType<KotlinCompile> {
         jvmTarget = "17"
         freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
     }
+    exclude("**/modules/rcon")
     exclude("**/modules/chatbridge")
 }
 
