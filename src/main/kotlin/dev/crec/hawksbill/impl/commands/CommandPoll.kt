@@ -63,7 +63,7 @@ class CommandPoll : ICommand {
             )
         }
 
-        if (bot.config.isDeveloperMode) {
+        if (bot.config.debugEnabled) {
             subcommand("test", "testing")
         }
     }

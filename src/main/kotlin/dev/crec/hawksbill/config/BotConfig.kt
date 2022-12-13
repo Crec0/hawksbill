@@ -51,7 +51,7 @@ data class BotConfig(
             OPTIONAL - Can be deleted
             """
     )
-    val isDeveloperMode: Boolean = false,
+    val debugEnabled: Boolean = false,
 
     @SerialName("bridge-server-port")
     @TomlComment(
@@ -61,7 +61,7 @@ data class BotConfig(
         REQUIRED
         """
     )
-    val bridgePort: UShort = 25564.toUShort(),
+    val bridgePort: Int = 25564,
 
     @SerialName("minecraft-server")
     @TomlComment(
@@ -100,7 +100,7 @@ data class MinecraftServer(
         Example: 25565
         """
     )
-    val serverPort: UShort = 25565.toUShort(),
+    val serverPort: Int = 25565,
 
     @SerialName("rcon-port")
     @TomlComment(
@@ -109,7 +109,7 @@ data class MinecraftServer(
         Example: 25575
         """
     )
-    val rconPort: UShort = 25575.toUShort(),
+    val rconPort: Int = 25575,
 
     @SerialName("rcon-password")
     @TomlComment(
@@ -127,7 +127,7 @@ data class MinecraftServer(
         Default: 25576
         """
     )
-    val bridgePort: UShort = 25576.toUShort(),
+    val bridgePort: Int = 25576,
 
     @SerialName("bridge-channel-id")
     @TomlComment(
