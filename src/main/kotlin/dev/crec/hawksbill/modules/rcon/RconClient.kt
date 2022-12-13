@@ -10,42 +10,8 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.util.concurrent.atomic.AtomicInteger
 
-//private val escapedPattern = Regex("\\\\([_*].*)") to "$1"
-//
-//private val formattingMap = listOf(
-//    Regex("(?<![\\\\\\[])\\*\\*(.*)\\*\\*") to "§l$1§7", // bold
-//    Regex("(?<![\\\\\\[])__(.*)__") to "§n$1§7", // underline
-//    Regex("(?<![\\\\\\[])\\*(.*)\\*") to "§o$1§7", // italic
-//    Regex("(?<![\\\\\\[])_([^_ ]+)_") to "§o$1§7", // italic
-//    Regex("(?<![\\\\\\[])~~(.*)~~") to "§m$1§7", // strike through
-//)
-//
-//private fun sanitize(message: String): String {
-//    var sanitizedMessage = message
-//    formattingMap.forEach { pair ->
-//        sanitizedMessage = pair.first.replace(sanitizedMessage, pair.second)
-//    }
-//    while (escapedPattern.first.containsMatchIn(sanitizedMessage)) {
-//        sanitizedMessage = escapedPattern.first.replace(sanitizedMessage, escapedPattern.second)
-//    }
-//    return sanitizedMessage
-//}
-//
-//suspend fun chatMessage(message: String) {
-//    login()
-//    sanitize(message).chunked(MAX_WRITE_LENGTH).forEach { chunk ->
-//        send(
-//            RconPacket(
-//                requestCounter.incrementAndGet(),
-//                RconResponse.CHAT_BRIDGE,
-//                chunk.toByteArray()
-//            )
-//        )
-//    }
-//}
-
-class Rcon(val serverConfig: MinecraftServer) {
-    private val log = LoggerFactory.getLogger("RCON|${serverConfig.name}")
+class RconClient(val serverConfig: MinecraftServer) {
+    private val log = LoggerFactory.getLogger("RCON-Client|${serverConfig.name}")
     private val socket = SuspendingSocket()
     private val requestCounter = AtomicInteger(0)
 
