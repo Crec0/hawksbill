@@ -1,5 +1,8 @@
 package dev.crec.hawksbill.utility.network
 
+import kotlinx.coroutines.runBlocking
+import java.net.InetAddress
+import java.net.InetSocketAddress
 import java.net.SocketAddress
 import java.nio.ByteBuffer
 import java.nio.channels.AsynchronousSocketChannel
@@ -16,6 +19,18 @@ import kotlin.time.Duration.Companion.milliseconds
 class SuspendingSocket(
     private val socketChannel: AsynchronousSocketChannel = AsynchronousSocketChannel.open()
 ) {
+    val localAddress: InetAddress
+        get() = (socketChannel.localAddress as InetSocketAddress).address
+
+    val remoteAddress: InetAddress
+        get() = (socketChannel.remoteAddress as InetSocketAddress).address
+
+    val isOpen: Boolean
+        get() = socketChannel.isOpen
+
+    val isClosed: Boolean
+        get() = !isOpen
+
     suspend fun connect(address: SocketAddress) {
         suspendCoroutine { continuation ->
             socketChannel.connect(
@@ -62,7 +77,21 @@ class SuspendingSocket(
     }
 }
 
-
+fun main() {
+    runBlocking {
+        val socket = SuspendingSocket()
+        socket.connect(InetSocketAddress("127.0.0.1", 12345))
+        println("socket connected")
+        val buffer = ByteBuffer.allocate(100)
+        val data = "hello".toByteArray()
+        buffer.putInt(data.size)
+        buffer.put(data)
+        buffer.rewind()
+        socket.write(buffer)
+        println("socket written")
+        buffer.clear()
+    }
+}
 
 
 
