@@ -1,5 +1,5 @@
 [versions]
-jda        = "5.0.0-beta.1"
+jda        = "5.0.0-beta.2"
 jda-ktx    = "17eb77a138ba356a3b0439afeddf77d4520c7c60"
 logback    = "1.4.4"
 kmongo     = "4.7.2"
