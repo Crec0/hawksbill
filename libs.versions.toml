@@ -4,7 +4,6 @@ jda-ktx    = "17eb77a138ba356a3b0439afeddf77d4520c7c60"
 logback    = "1.4.4"
 kmongo     = "4.7.2"
 coroutines = "1.6.4"
-stdlib     = "1.7.20"
 mathparser = "5.0.7"
 classgraph = "4.8.149"
 tomlkt     = "0.1.7"
@@ -19,5 +18,4 @@ mathparser = { module = "org.mariuszgromada.math:MathParser.org-mXparser" , vers
 classgraph = { module = "io.github.classgraph:classgraph"                 , version.ref = "classgraph" }
 tomlkt     = { module = "net.peanuuutz:tomlkt"                            , version.ref = "tomlkt" }
 coroutines = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core"   , version.ref = "coroutines" }
-stdlib     = { module = "org.jetbrains.kotlin:kotlin-stdlib"              , version.ref = "stdlib" }
 okhttp     = { module = "com.squareup.okhttp3:okhttp"                     , version.ref = "okhttp"}

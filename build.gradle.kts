@@ -1,13 +1,15 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+
 plugins {
+    val kotlinVersion = "1.8.0"
+
+    kotlin("jvm") version (kotlinVersion)
+    kotlin("plugin.serialization") version (kotlinVersion)
+
+    id("com.github.johnrengelman.shadow") version ("7.1.1")
     application
-
-    kotlin("jvm") version("1.7.20")
-    kotlin("plugin.serialization") version("1.7.20")
-
-    id("com.github.johnrengelman.shadow") version("7.1.1")
 }
 
 val projectName = "HawksBill"
@@ -25,8 +27,10 @@ repositories {
 }
 
 dependencies {
+    implementation(platform(kotlin("bom")))
+    implementation(kotlin("stdlib-jdk8"))
+
     implementation(libs.coroutines)
-    implementation(libs.stdlib)
 
     implementation(libs.jda)
     implementation(libs.jda.ktx)
