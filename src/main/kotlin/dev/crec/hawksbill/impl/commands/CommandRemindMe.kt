@@ -100,11 +100,11 @@ class CommandRemindMe : ICommand {
             )
             .queue()
 
-        bot.database.getCollection<ReminderDTO>().insertOne(
+        bot.mongoCollection<ReminderDTO>().insertOne(
             ReminderDTO(
-                reminder_id = hash,
-                member_id = user.id,
-                channel_id = event.channel.id,
+                reminderId = hash,
+                memberId = user.id,
+                channelId = event.channel.id,
                 message = message,
                 created = currentTime / 1000,
                 expiry = duration,
@@ -116,14 +116,14 @@ class CommandRemindMe : ICommand {
 
     private suspend fun handleCancelReminder(event: SlashCommandInteractionEvent) {
         val reminderId = event.getOption("id")!!.asString
-        val reminder = bot.database.getCollection<ReminderDTO>().findOne(ReminderDTO::reminder_id eq reminderId)
+        val reminder = bot.mongoCollection<ReminderDTO>().findOne(ReminderDTO::reminderId eq reminderId)
 
-        val content = when (reminder?.member_id) {
+        val content = when (reminder?.memberId) {
             null -> "No reminder found with id: $reminderId"
             event.user.id -> {
-                bot.database.getCollection<ReminderDTO>().deleteOne(ReminderDTO::reminder_id eq reminderId)
+                bot.mongoCollection<ReminderDTO>().deleteOne(ReminderDTO::reminderId eq reminderId)
 
-                "Successfully cancelled reminder for <@${reminder.member_id}> ${reminder.message.truncate(20)}"
+                "Successfully cancelled reminder for <@${reminder.memberId}> ${reminder.message.truncate(20)}"
             }
 
             else -> "You can only cancel your own reminders"
@@ -136,7 +136,7 @@ class CommandRemindMe : ICommand {
 
     private suspend fun handleListReminders(event: SlashCommandInteractionEvent) {
         val user = event.getOption("user")!!.asUser
-        val reminders = bot.database.getCollection<ReminderDTO>().find(ReminderDTO::member_id eq user.id).toList()
+        val reminders = bot.mongoCollection<ReminderDTO>().find(ReminderDTO::memberId eq user.id).toList()
 
         if (reminders.isEmpty()) {
             event.deferReply(true)
@@ -152,7 +152,7 @@ class CommandRemindMe : ICommand {
                     description = reminders.subList(0, min(10, reminders.size)).mapIndexed { index, remindMe ->
                         """
                         ${index + 1}. ${remindMe.message.truncate(20)}
-                        $SPACE_1EM*id: `${remindMe.reminder_id}`*
+                        $SPACE_1EM*id: `${remindMe.reminderId}`*
                         """.trimIndent()
                     }.joinToString("\n")
                     color = Colors.EMERALD_400.hex
@@ -163,15 +163,15 @@ class CommandRemindMe : ICommand {
 
     private suspend fun handleInfoReminder(event: SlashCommandInteractionEvent) {
         val reminderId = event.getOption("id")!!.asString
-        val reminder = bot.database.getCollection<ReminderDTO>().findOne(ReminderDTO::reminder_id eq reminderId)
+        val reminder = bot.mongoCollection<ReminderDTO>().findOne(ReminderDTO::reminderId eq reminderId)
 
-        val (ephemeral, content) = when (reminder?.member_id) {
+        val (ephemeral, content) = when (reminder?.memberId) {
             null -> true to "No reminder found with id: $reminderId"
             event.user.id -> {
                 false to """
-                    Author **❱** <@${reminder.member_id}>
+                    Author **❱** <@${reminder.memberId}>
                     Message **❱** ${reminder.message}
-                    id **❱** `${reminder.reminder_id}`
+                    id **❱** `${reminder.reminderId}`
                     Created **❱** <t:${reminder.created}:R>
                     Expiry **❱** <t:${reminder.expiry}:R>
                 """.trimIndent()

@@ -2,13 +2,16 @@ package dev.crec.hawksbill.impl.database
 
 import dev.crec.hawksbill.api.database.Entity
 import kotlinx.serialization.Contextual
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.util.TimeZone
 
 @Serializable
 data class TimeZoneDTO(
-    val member_id: String,
+    @SerialName("member_id")
+    val memberId: String,
     @Contextual
-    val time_zone: TimeZone
+    @SerialName("timezone")
+    val timeZone: TimeZone
 ) : Entity
 

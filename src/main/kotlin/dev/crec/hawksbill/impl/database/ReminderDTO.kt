@@ -1,6 +1,7 @@
 package dev.crec.hawksbill.impl.database
 
 import dev.crec.hawksbill.api.database.Entity
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import net.dv8tion.jda.api.entities.User
 import java.time.Duration
@@ -11,9 +12,12 @@ import java.util.concurrent.TimeUnit
 
 @Serializable
 data class ReminderDTO(
-    val reminder_id: String,
-    val member_id: String,
-    val channel_id: String,
+    @SerialName("reminder_id")
+    val reminderId: String,
+    @SerialName("member_id")
+    val memberId: String,
+    @SerialName("channel_id")
+    val channelId: String,
     val message: String,
     val created: Long,
     val expiry: Long,
@@ -21,7 +25,7 @@ data class ReminderDTO(
 
     val formattedMessage =
         """
-        Reminder for ${User.fromId(this.member_id).asMention}
+        Reminder for ${User.fromId(this.memberId).asMention}
         > ${this.message}
         *Created: <t:${this.created}:R>*
         """.trimIndent()

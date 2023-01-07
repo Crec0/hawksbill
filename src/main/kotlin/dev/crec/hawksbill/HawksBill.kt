@@ -2,6 +2,7 @@ package dev.crec.hawksbill
 
 import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
+import dev.crec.hawksbill.api.database.Entity
 import dev.crec.hawksbill.config.ConfigIO
 import dev.crec.hawksbill.impl.jda.EventListener
 import dev.crec.hawksbill.impl.services.ReminderUpdatingService
@@ -25,6 +26,7 @@ import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
+import kotlin.properties.Delegates
 import kotlin.time.Duration.Companion.seconds
 
 class HawksBill {
@@ -37,10 +39,10 @@ class HawksBill {
 
     val tenorAPI = TenorAPI(config)
 
-    lateinit var commands: Map<String, ICommand>
+    var commands: Map<String, ICommand> by Delegates.notNull()
         private set
 
-    lateinit var jda: JDA
+    var jda: JDA by Delegates.notNull()
         private set
 
     fun init() {
@@ -51,6 +53,8 @@ class HawksBill {
             reminderService.start()
         }
     }
+
+    inline fun <reified C: Entity> mongoCollection() = database.getCollection<C>()
 
     private fun scanCommands(): Map<String, ICommand> {
         val classGraph = ClassGraph()

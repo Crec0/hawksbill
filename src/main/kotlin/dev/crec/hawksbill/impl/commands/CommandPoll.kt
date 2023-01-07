@@ -41,6 +41,8 @@ class CommandPoll : ICommand {
         "poll",
         "Create and manage polls"
     ) {
+        isGuildOnly = true
+
         subcommand(name = "create", description = "Create a poll") {
             option<String>(
                 name = "question",
@@ -194,7 +196,7 @@ class CommandPoll : ICommand {
             return
         }
 
-        val channel = event.jda.getTextChannelById(poll.channel_id)
+        val channel = event.jda.getTextChannelById(poll.channelId)
 
         if (channel == null) {
             event.deferReply(true).setContent("Poll channel not found").queue()
@@ -349,18 +351,16 @@ class CommandPoll : ICommand {
         return buffer.toByteArray()
     }
 
-    private fun collection() = bot.database.getCollection<PollDTO>()
-
     private suspend fun createPollEntry(
         messageId: String,
         channelId: String,
         question: String,
         options: Map<String, String>
     ) {
-        collection().insertOne(
+        bot.mongoCollection<PollDTO>().insertOne(
             PollDTO(
-                vote_id = messageId,
-                channel_id = channelId,
+                voteId = messageId,
+                channelId = channelId,
                 question = question,
                 options = options
             )
@@ -368,24 +368,24 @@ class CommandPoll : ICommand {
     }
 
     private suspend fun fetchPoll(pollID: String): PollDTO? {
-        return collection().findOne(PollDTO::vote_id eq pollID)
+        return bot.mongoCollection<PollDTO>().findOne(PollDTO::voteId eq pollID)
     }
 
     private suspend fun updatePollEntry(voteId: String, userId: String, selectedOption: String) {
-        collection().updateOne(
-            PollDTO::vote_id eq voteId,
+        bot.mongoCollection<PollDTO>().updateOne(
+            PollDTO::voteId eq voteId,
             set(PollDTO::votes.keyProjection(key = userId) setTo selectedOption)
         )
     }
 
     private suspend fun removePollEntry(voteId: String, userId: String) {
-        collection().updateOne(
-            PollDTO::vote_id eq voteId,
+        bot.mongoCollection<PollDTO>().updateOne(
+            PollDTO::voteId eq voteId,
             unset(PollDTO::votes.keyProjection(key = userId))
         )
     }
 
     private suspend fun deletePoll(voteId: String) {
-        collection().deleteOne(PollDTO::vote_id eq voteId)
+        bot.mongoCollection<PollDTO>().deleteOne(PollDTO::voteId eq voteId)
     }
 }

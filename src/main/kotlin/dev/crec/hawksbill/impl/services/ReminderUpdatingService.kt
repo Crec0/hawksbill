@@ -25,16 +25,16 @@ class ReminderUpdatingService : RepeatingService(5.seconds, 1.seconds) {
         this.requiresUpdate.set(true)
     }
 
-    private fun collection() = bot.database.getCollection<ReminderDTO>()
-
     private suspend fun updateCache() {
         if (coolDown.inWholeSeconds == 0L || requiresUpdate.get()) {
 
             requiresUpdate.set(false)
             coolDown = 60.seconds
 
-            collection()
-                .find(ReminderDTO::expiry lt (Instant.now().epochSecond + 5.minutes.inWholeSeconds))
+            val fiveMinutesInFuture = Instant.now().epochSecond + 5.minutes.inWholeSeconds
+
+            bot.mongoCollection<ReminderDTO>()
+                .find(ReminderDTO::expiry lt fiveMinutesInFuture)
                 .toList()
                 .forEach {
                     if (!cache.contains(it)) {
@@ -52,22 +52,22 @@ class ReminderUpdatingService : RepeatingService(5.seconds, 1.seconds) {
             val remindersToDelete = mutableListOf<String>()
 
             cache.asExpiredValuesFlow().collect { reminder ->
-                val channel = bot.jda.getChannel<TextChannel>(reminder.channel_id)
-                val member = channel?.guild?.retrieveMemberById(reminder.member_id)?.await()
+                val channel = bot.jda.getChannel<TextChannel>(reminder.channelId)
+                val member = channel?.guild?.retrieveMemberById(reminder.memberId)?.await()
 
                 if (channel == null || member != null && !channel.canTalk(member)) {
-                    bot.jda.openPrivateChannelById(reminder.member_id)
+                    bot.jda.openPrivateChannelById(reminder.memberId)
                         .flatMap { it.sendMessage(reminder.formattedMessage) }
                         .queue()
                 } else {
                     channel.sendMessage(reminder.formattedMessage).queue()
                 }
 
-                remindersToDelete.add(reminder.reminder_id)
+                remindersToDelete.add(reminder.reminderId)
             }
 
             if (remindersToDelete.isNotEmpty()) {
-                collection().deleteMany(ReminderDTO::reminder_id `in` remindersToDelete)
+                bot.mongoCollection<ReminderDTO>().deleteMany(ReminderDTO::reminderId `in` remindersToDelete)
             }
         }
     }
