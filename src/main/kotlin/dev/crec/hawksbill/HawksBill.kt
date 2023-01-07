@@ -71,11 +71,9 @@ class HawksBill {
     }
 
     private fun updateCommands() {
-        val commandData = commands.values.map { cmd -> cmd.commandData() }
-        jda.guilds.forEach { guild ->
-            guild.updateCommands().addCommands(commandData).queue()
-        }
-        log.info("Registered ${commandData.size} commands for ${jda.guilds.size} guild(s)")
+        val commandData = commands.values.map(ICommand::commandData)
+        jda.updateCommands().addCommands(commandData).queue()
+        log.info("Registered ${commandData.size} commands.")
     }
 
     private fun initJDA(): JDA {
