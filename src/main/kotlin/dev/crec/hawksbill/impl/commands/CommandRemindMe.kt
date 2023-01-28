@@ -4,6 +4,7 @@ import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
 import dev.crec.hawksbill.bot
 import dev.crec.hawksbill.impl.database.ReminderDTO
+import dev.crec.hawksbill.impl.services.ReminderUpdatingService
 import dev.crec.hawksbill.utility.Colors
 import dev.crec.hawksbill.utility.extensions.SPACE_1EM
 import dev.crec.hawksbill.utility.extensions.hashString
@@ -111,7 +112,7 @@ class CommandRemindMe : ICommand {
             )
         )
 
-        bot.reminderService.requestUpdate()
+        bot.service<ReminderUpdatingService>().requestUpdate()
     }
 
     private suspend fun handleCancelReminder(event: SlashCommandInteractionEvent) {
@@ -155,7 +156,7 @@ class CommandRemindMe : ICommand {
                         $SPACE_1EM*id: `${remindMe.reminderId}`*
                         """.trimIndent()
                     }.joinToString("\n")
-                    color = Colors.EMERALD_400.hex
+                    color = Colors.EMERALD_400
                 }
             )
             .queue()

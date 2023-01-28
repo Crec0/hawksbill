@@ -3,60 +3,93 @@ package dev.crec.hawksbill
 import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
 import dev.crec.hawksbill.api.database.Entity
+import dev.crec.hawksbill.api.services.Service
 import dev.crec.hawksbill.config.ConfigIO
 import dev.crec.hawksbill.impl.jda.EventListener
-import dev.crec.hawksbill.impl.services.ReminderUpdatingService
-import dev.crec.hawksbill.utility.extensions.child
 import dev.crec.hawksbill.utility.requests.TenorAPI
 import dev.minn.jda.ktx.events.CoroutineEventManager
-import dev.minn.jda.ktx.jdabuilder.scope
 import io.github.classgraph.ClassGraph
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.launch
+import mu.KotlinLogging
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
-import net.dv8tion.jda.api.events.session.ReadyEvent
-import net.dv8tion.jda.api.events.session.ShutdownEvent
 import okhttp3.ConnectionPool
 import okhttp3.OkHttpClient
 import org.litote.kmongo.coroutine.coroutine
 import org.litote.kmongo.reactivestreams.KMongo
 import java.util.concurrent.CancellationException
 import java.util.concurrent.TimeUnit
-import kotlin.properties.Delegates
+import kotlin.properties.Delegates.notNull
 import kotlin.time.Duration.Companion.seconds
 
 class HawksBill {
-    val log        = mainLogger.child("Bot")
-    val config     = ConfigIO.read()
-    val database   = KMongo.createClient(config.databaseURL).getDatabase(config.databaseName).coroutine
+
+    val log = KotlinLogging.logger {}
+
+    val config = ConfigIO.read()
+    val tenorAPI = TenorAPI(config)
+    val database = KMongo.createClient(config.databaseURL).getDatabase(config.databaseName).coroutine
     val httpClient = OkHttpClient.Builder().connectionPool(ConnectionPool(10, 20, TimeUnit.SECONDS)).build()
 
-    val reminderService = ReminderUpdatingService()
-
-    val tenorAPI = TenorAPI(config)
-
-    var commands: Map<String, ICommand> by Delegates.notNull()
+    var coroutineScope: CoroutineScope by notNull()
         private set
 
-    var jda: JDA by Delegates.notNull()
+    var serviceManager: ServiceManager by notNull()
+        private set
+
+    var commands: Map<String, ICommand> by notNull()
+        private set
+
+    var jda: JDA by notNull()
         private set
 
     fun init() {
-        commands = scanCommands()
-        jda = initJDA()
+        log.info { "[Init] Init" }
+        log.info { "[Init] Command Scanning" }
+        commands = instantiateCommands()
+        log.info { "[Done] Command Scanning" }
 
-        jda.scope.launch {
-            reminderService.start()
+        log.info { "[Init] JDA" }
+        coroutineScope = buildCoroutineScope()
+        jda = instantiateJDA()
+        log.info { "[Done] JDA" }
+
+        log.info { "[Init] Services" }
+        serviceManager = ServiceManager().apply {
+            startServices(coroutineScope)
         }
+        log.info { "[Done] Services" }
+        log.info { "[Done] Init" }
     }
 
-    inline fun <reified C: Entity> mongoCollection() = database.getCollection<C>()
+    inline fun <reified TEntity : Entity> mongoCollection() = database.getCollection<TEntity>()
 
-    private fun scanCommands(): Map<String, ICommand> {
+    inline fun <reified TService: Service> service(): TService {
+        val service = serviceManager.services[TService::class.qualifiedName]
+        return checkNotNull(service) { "Service for class ${TService::class} doesn't exist." } as TService
+    }
+
+    private fun buildCoroutineScope(): CoroutineScope {
+        val ancestorJob = SupervisorJob()
+
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+            if (throwable !is CancellationException) {
+                log.error(throwable) { "Uncaught exception in coroutine" }
+            }
+
+            if (throwable is Error) {
+                ancestorJob.cancel()
+                throw throwable
+            }
+        }
+
+        return CoroutineScope(Dispatchers.IO + ancestorJob + exceptionHandler)
+    }
+
+    private fun instantiateCommands(): Map<String, ICommand> {
         val classGraph = ClassGraph()
             .enableClassInfo()
             .enableAnnotationInfo()
@@ -71,38 +104,15 @@ class HawksBill {
             }
         }
 
+        log.debug {
+            "Commands Scanned => ${classes.map { it.name }.sorted()}"
+        }
         return classes.associateBy { it.name }
     }
 
-    private fun updateCommands() {
-        val commandData = commands.values.map(ICommand::commandData)
-        jda.updateCommands().addCommands(commandData).queue()
-        log.info("Registered ${commandData.size} commands.")
-    }
-
-    private fun initJDA(): JDA {
-        val supervisorJob = SupervisorJob()
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            if (throwable !is CancellationException)
-                log.error("Uncaught exception in coroutine", throwable)
-            if (throwable is Error) {
-                supervisorJob.cancel()
-                throw throwable
-            }
-        }
-        val scope = CoroutineScope(Dispatchers.IO + supervisorJob + exceptionHandler)
-        val manager = CoroutineEventManager(scope, 30.seconds)
-
-        manager.listener<ReadyEvent> {
-            updateCommands()
-        }
-
-        manager.listener<ShutdownEvent> {
-            supervisorJob.cancel()
-        }
-
+    private fun instantiateJDA(): JDA {
         return JDABuilder.createDefault(config.token)
-            .setEventManager(manager)
+            .setEventManager(CoroutineEventManager(coroutineScope, 5.seconds))
             .addEventListeners(EventListener())
             .setHttpClient(httpClient)
             .build()

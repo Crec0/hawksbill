@@ -46,29 +46,27 @@ class ReminderUpdatingService : RepeatingService(5.seconds, 1.seconds) {
         }
     }
 
-    suspend fun start() {
-        super.runTask {
-            updateCache()
-            val remindersToDelete = mutableListOf<String>()
+    override suspend fun task() {
+        updateCache()
+        val remindersToDelete = mutableListOf<String>()
 
-            cache.asExpiredValuesFlow().collect { reminder ->
-                val channel = bot.jda.getChannel<TextChannel>(reminder.channelId)
-                val member = channel?.guild?.retrieveMemberById(reminder.memberId)?.await()
+        cache.asExpiredValuesFlow().collect { reminder ->
+            val channel = bot.jda.getChannel<TextChannel>(reminder.channelId)
+            val member = channel?.guild?.retrieveMemberById(reminder.memberId)?.await()
 
-                if (channel == null || member != null && !channel.canTalk(member)) {
-                    bot.jda.openPrivateChannelById(reminder.memberId)
-                        .flatMap { it.sendMessage(reminder.formattedMessage) }
-                        .queue()
-                } else {
-                    channel.sendMessage(reminder.formattedMessage).queue()
-                }
-
-                remindersToDelete.add(reminder.reminderId)
+            if (channel == null || member != null && !channel.canTalk(member)) {
+                bot.jda.openPrivateChannelById(reminder.memberId)
+                    .flatMap { it.sendMessage(reminder.formattedMessage) }
+                    .await()
+            } else {
+                channel.sendMessage(reminder.formattedMessage).await()
             }
 
-            if (remindersToDelete.isNotEmpty()) {
-                bot.mongoCollection<ReminderDTO>().deleteMany(ReminderDTO::reminderId `in` remindersToDelete)
-            }
+            remindersToDelete.add(reminder.reminderId)
+        }
+
+        if (remindersToDelete.isNotEmpty()) {
+            bot.mongoCollection<ReminderDTO>().deleteMany(ReminderDTO::reminderId `in` remindersToDelete)
         }
     }
 }
