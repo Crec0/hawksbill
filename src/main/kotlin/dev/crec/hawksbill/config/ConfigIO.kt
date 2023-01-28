@@ -1,8 +1,8 @@
 package dev.crec.hawksbill.config
 
-import dev.crec.hawksbill.utility.extensions.toPath
 import kotlinx.serialization.decodeFromString
 import net.peanuuutz.tomlkt.Toml
+import java.nio.file.Path
 import kotlin.io.path.name
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
@@ -23,8 +23,8 @@ object ConfigIO {
         )
     )
 
-    private val configPath = "./config.toml".toPath()
-    private val sampleConfigPath = "./sample.config.toml".toPath()
+    private val configPath = Path.of("./config.toml")
+    private val sampleConfigPath = Path.of("./sample.config.toml")
 
     fun read(): BotConfig {
         if (configPath.notExists()) {
