@@ -244,7 +244,7 @@ class CommandPoll : ICommand {
         RETRACT("Retract"),
     }
 
-    private fun rankingColor(rank: Int): Colors {
+    private fun rankingColor(rank: Int): Int {
 
         return when (rank) {
             1 -> Colors.LIGHT_BLUE_400
