@@ -36,6 +36,7 @@ dependencies {
     implementation(libs.jda.ktx)
 
     implementation(libs.logback)
+    implementation(libs.klogging)
 
     implementation(libs.kmongo)
 
