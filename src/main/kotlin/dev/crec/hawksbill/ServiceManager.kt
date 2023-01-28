@@ -1,14 +1,14 @@
 package dev.crec.hawksbill
 
 import dev.crec.hawksbill.api.services.Service
-import dev.crec.hawksbill.impl.services.ReminderUpdatingService
+import dev.crec.hawksbill.impl.services.ReminderService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 class ServiceManager {
 
     val services = listOf<Service>(
-        ReminderUpdatingService()
+        ReminderService()
     ).associateBy { service ->
         service::class.qualifiedName
             ?: throw IllegalStateException("Null class name for service")

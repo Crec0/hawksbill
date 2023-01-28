@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-class ReminderUpdatingService : RepeatingService(5.seconds, 1.seconds) {
+class ReminderService : RepeatingService(5.seconds, 1.seconds) {
 
     private var cache: DelayQueue<ReminderDTO> = DelayQueue()
     private var coolDown = 0.seconds

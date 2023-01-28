@@ -4,7 +4,7 @@ import dev.crec.hawksbill.api.annotation.SlashCommandMarker
 import dev.crec.hawksbill.api.command.ICommand
 import dev.crec.hawksbill.bot
 import dev.crec.hawksbill.impl.database.ReminderDTO
-import dev.crec.hawksbill.impl.services.ReminderUpdatingService
+import dev.crec.hawksbill.impl.services.ReminderService
 import dev.crec.hawksbill.utility.Colors
 import dev.crec.hawksbill.utility.extensions.SPACE_1EM
 import dev.crec.hawksbill.utility.extensions.hashString
@@ -112,7 +112,7 @@ class CommandRemindMe : ICommand {
             )
         )
 
-        bot.service<ReminderUpdatingService>().requestUpdate()
+        bot.service<ReminderService>().requestUpdate()
     }
 
     private suspend fun handleCancelReminder(event: SlashCommandInteractionEvent) {
