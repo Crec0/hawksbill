@@ -24,10 +24,10 @@ fun Graphics2D.rect(
     y: Int,
     width: Int,
     height: Int,
-    color: Colors = Colors.WHITE,
+    color: Int = Colors.WHITE,
     fill: Boolean = false
 ) {
-    this.color = Color(color.hex)
+    this.color = Color(color)
     if (fill) {
         this.fillRect(x, y, width, height)
     } else {
@@ -43,10 +43,10 @@ fun Graphics2D.text(
     style: Int = Font.PLAIN,
     size: Int = 18,
     font: Font = Font(fontName, style, size),
-    color: Colors = Colors.WHITE
+    color: Int = Colors.WHITE
 ) {
     this.font = font
-    this.color = Color(color.hex)
+    this.color = Color(color)
     this.drawString(text, x, y)
 }
 
@@ -55,10 +55,10 @@ fun Graphics2D.ellipse(
     y: Int,
     width: Int,
     height: Int,
-    color: Colors = Colors.EMERALD_400,
+    color: Int = Colors.EMERALD_400,
     fill: Boolean = true
 ) {
-    this.color = Color(color.hex)
+    this.color = Color(color)
     if (fill) {
         this.fillOval(x, y, width, height)
     } else {
